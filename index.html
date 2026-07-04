@@ -792,7 +792,7 @@
                 if (t.rounds && t.rounds.length > 0) {
                     guard.classList.add('hidden');
                     renderActiveBracket();
-                    updateConnectors(); // just update connectors
+                    updateConnectors();
                 } else {
                     guard.classList.remove('hidden');
                 }
@@ -1063,7 +1063,7 @@
                 }
             }
 
-            fixtures.forEach((f, idx) => { f.id = `m-${idx}`; });
+            // Do NOT assign id here; it will be assigned in buildBalancedGroupFixtures
             return fixtures;
         }
 
@@ -1101,7 +1101,12 @@
             for (let g = 0; g < numGroups; g++) {
                 const groupName = String.fromCharCode(65 + g);
                 const groupTeams = teams.slice(g * groupSize, (g + 1) * groupSize);
-                const matches = generateRoundRobinFixtures(groupTeams);
+                let matches = generateRoundRobinFixtures(groupTeams);
+                // Assign unique IDs based on group name
+                matches = matches.map((m, idx) => {
+                    m.id = `${groupName}-${idx}`;
+                    return m;
+                });
                 groups.push({ name: `Group ${groupName}`, teams: groupTeams, matches });
             }
             return groups;
