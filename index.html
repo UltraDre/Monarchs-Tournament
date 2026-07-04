@@ -17,6 +17,11 @@
             padding: 0;
         }
 
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: #0d0f1a;
@@ -25,9 +30,7 @@
                 radial-gradient(circle at 90% 80%, rgba(124, 99, 26, 0.12) 0%, transparent 60%),
                 linear-gradient(to bottom, #0d0f1a, #080a12);
             color: #fff;
-            overflow-x: auto;
             min-height: 100vh;
-            min-width: 1200px;
             display: flex;
             flex-direction: column;
             padding: 0 20px;
@@ -417,13 +420,88 @@
             margin-right: auto;
         }
 
+        /* No scroll bars - everything directly on page */
         .bracket-wrapper {
-            overflow: auto;
-            max-height: 90vh;
+            overflow: visible !important;
+            max-height: none !important;
+            padding: 20px 10px !important;
         }
 
-        .name-input.clickable {
-            cursor: pointer;
+        .bracket-full-page {
+            overflow: visible !important;
+        }
+
+        .bracket-full-page #bracket-container {
+            max-width: 100% !important;
+            padding: 0 10px;
+            overflow: visible !important;
+        }
+
+        .bracket-full-page #bracket-viewport {
+            width: 100%;
+            height: auto !important;
+            min-height: 800px;
+            gap: 8px;
+            overflow: visible !important;
+            flex-wrap: nowrap;
+        }
+
+        .bracket-full-page .bracket-col {
+            padding: 0 8px;
+            min-width: 150px;
+            flex: 1 1 0;
+        }
+
+        .bracket-full-page .bracket-col .col-title {
+            font-size: 10px;
+            margin-bottom: 16px;
+        }
+
+        .bracket-full-page .name-input {
+            width: 120px;
+            height: 32px;
+            font-size: 9px;
+        }
+
+        .bracket-full-page .score-input {
+            width: 28px;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .bracket-full-page .champion-slot .name-input {
+            width: 140px;
+            height: 36px;
+            font-size: 10px;
+        }
+
+        .bracket-full-page .trophy-svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .bracket-full-page .slot-pair-second {
+            margin-bottom: 20px;
+        }
+
+        .bracket-full-page .slot-pair-first {
+            margin-bottom: 2px;
+        }
+
+        .bracket-full-page .champion-col {
+            flex: 0 0 160px !important;
+            min-width: 140px;
+        }
+
+        /* Remove scroll from knockout tab view */
+        #tab-view-knockout {
+            overflow: visible !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 10px !important;
+            min-height: 100vh;
         }
 
         /* Sticky controls - part of page flow, good for screenshots */
@@ -440,6 +518,8 @@
             -webkit-backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(255, 215, 0, 0.1);
             pointer-events: none;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .floating-controls>* {
             pointer-events: auto;
@@ -454,6 +534,7 @@
             display: flex;
             justify-content: center;
             flex: 1;
+            min-width: 200px;
         }
         .floating-controls .pill-nav {
             background: rgba(20, 24, 43, 0.7);
@@ -464,6 +545,8 @@
             padding: 4px;
             display: flex;
             gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .floating-controls .pill-btn {
             padding: 6px 16px;
@@ -528,6 +611,10 @@
 
         .main-content {
             padding-top: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* hide tabs when not needed */
@@ -538,56 +625,25 @@
             display: none;
         }
 
-        /* Full page knockout bracket */
-        .bracket-full-page {
-            padding: 0 !important;
-            margin: 0 !important;
+        /* Ensure home and create views work properly */
+        #home-view, #create-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
         }
-        .bracket-full-page #bracket-container {
-            max-width: 100% !important;
-            padding: 0 10px;
+        #home-view.hidden, #create-view.hidden {
+            display: none !important;
         }
-        .bracket-full-page #bracket-viewport {
-            width: 100%;
-            height: 2600px;
-            gap: 8px;
+        #tab-view-groups.hidden, #tab-view-fixtures.hidden, #tab-view-knockout.hidden {
+            display: none !important;
         }
-        .bracket-full-page .bracket-col {
-            padding: 0 8px;
-            min-width: 150px;
-        }
-        .bracket-full-page .bracket-col .col-title {
-            font-size: 10px;
-            margin-bottom: 16px;
-        }
-        .bracket-full-page .name-input {
-            width: 120px;
-            height: 32px;
-            font-size: 9px;
-        }
-        .bracket-full-page .score-input {
-            width: 28px;
-            height: 32px;
-            font-size: 12px;
-        }
-        .bracket-full-page .champion-slot .name-input {
-            width: 140px;
-            height: 36px;
-            font-size: 10px;
-        }
-        .bracket-full-page .trophy-svg {
-            width: 32px;
-            height: 32px;
-        }
-        .bracket-full-page .slot-pair-second {
-            margin-bottom: 20px;
-        }
-        .bracket-full-page .slot-pair-first {
-            margin-bottom: 2px;
-        }
-        .bracket-full-page .champion-col {
-            flex: 0 0 160px !important;
-            min-width: 140px;
+        #tab-view-groups, #tab-view-fixtures, #tab-view-knockout {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
@@ -819,8 +875,8 @@
                 <div id="fixtures-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
             </main>
 
-            <!-- Knockout -->
-            <main id="tab-view-knockout" class="hidden flex-grow w-full overflow-x-auto overflow-y-auto flex items-start justify-center bracket-wrapper relative bracket-full-page">
+            <!-- Knockout - No scroll bars, everything directly on page -->
+            <main id="tab-view-knockout" class="hidden flex-grow w-full flex items-start justify-center bracket-wrapper bracket-full-page">
 
                 <div id="knockout-guard-overlay" class="absolute inset-0 z-40 bg-[#0d0f1a]/95 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
                     <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
@@ -833,7 +889,7 @@
 
                 <div id="bracket-container" class="relative w-full max-w-full">
                     <svg id="connector-svg"></svg>
-                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full h-[2600px] relative gap-2">
+                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full min-h-[800px] relative gap-2">
                         <!-- Dynamic Bracket Columns -->
                     </div>
                 </div>
@@ -1117,7 +1173,6 @@
                     "py-3 px-4 rounded-lg bg-white/5 border border-white/5 text-gray-400 text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2";
                 optKO.classList.remove('hidden');
                 optGP.classList.add('hidden');
-                // Update distribution button states for knockout
                 updateDistButtons();
             } else {
                 tabGP.className =
@@ -1126,7 +1181,6 @@
                     "py-3 px-4 rounded-lg bg-white/5 border border-white/5 text-gray-400 text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2";
                 optGP.classList.remove('hidden');
                 optKO.classList.add('hidden');
-                // Update distribution button states for group
                 updateDistButtons();
             }
             adjustContendersPlaceholder();
@@ -1255,7 +1309,6 @@
                 }
             }
 
-            // Do NOT assign id here; it will be assigned in buildBalancedGroupFixtures
             return fixtures;
         }
 
@@ -1298,7 +1351,6 @@
                 const groupName = String.fromCharCode(65 + g);
                 const groupTeams = teams.slice(g * groupSize, (g + 1) * groupSize);
                 let matches = generateRoundRobinFixtures(groupTeams);
-                // Assign unique IDs based on group name
                 matches = matches.map((m, idx) => {
                     m.id = `${groupName}-${idx}`;
                     return m;
@@ -1309,25 +1361,22 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  BUILD INITIAL KNOCKOUT ROUNDS (generic, with optional ordered teams)
+        //  BUILD INITIAL KNOCKOUT ROUNDS
         // ──────────────────────────────────────────────────────────────
         function buildKnockoutRoundsFromOrder(orderedTeams) {
             const count = orderedTeams.length;
-            // Check if count is power of 2
             if ((count & (count - 1)) !== 0) {
                 alert("Number of teams must be a power of 2 for a balanced bracket.");
                 return null;
             }
             const roundsCount = Math.log2(count);
             let rounds = [];
-            // First round: place teams in order (each slot gets one team)
             let slots = [];
             for (let s = 0; s < count; s++) {
                 slots.push({ name: orderedTeams[s] || "", scoreLeg1: "", scoreLeg2: "", isWinner: false });
             }
             rounds.push({ roundIndex: 0, title: getRoundTitle(0, roundsCount), slots: slots });
 
-            // Subsequent rounds: empty slots
             for (let r = 1; r <= roundsCount; r++) {
                 const slotsInRound = count / Math.pow(2, r);
                 let roundSlots = [];
@@ -1510,7 +1559,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  KNOCKOUT WINNER TOGGLE (manual advancement)
+        //  KNOCKOUT WINNER TOGGLE
         // ──────────────────────────────────────────────────────────────
         function toggleWinner(roundIdx, slotIdx) {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1817,7 +1866,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  ADVANCE GROUP QUALIFIERS → KNOCKOUT (with specific pairings)
+        //  ADVANCE GROUP QUALIFIERS → KNOCKOUT
         // ──────────────────────────────────────────────────────────────
         function advanceGroupQualifiers() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1916,7 +1965,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  BUILD INITIAL KNOCKOUT ROUNDS (used for direct knockout creation)
+        //  BUILD INITIAL KNOCKOUT ROUNDS (for direct knockout)
         // ──────────────────────────────────────────────────────────────
         function buildInitialKnockoutRounds(contenders) {
             const count = contenders.length;
@@ -1925,7 +1974,7 @@
                 return null;
             }
             const roundsCount = Math.log2(count);
-            const seeded = [...contenders]; // Respect the order passed in
+            const seeded = [...contenders];
             let rounds = [];
             for (let r = 0; r < roundsCount; r++) {
                 const slotsInRound = count / Math.pow(2, r);
