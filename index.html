@@ -1113,22 +1113,34 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  BUILD INITIAL KNOCKOUT ROUNDS
+        //  BUILD INITIAL KNOCKOUT ROUNDS (generic, with optional ordered teams)
         // ──────────────────────────────────────────────────────────────
-        function buildInitialKnockoutRounds(contenders) {
-            const count = contenders.length;
+        function buildKnockoutRoundsFromOrder(orderedTeams) {
+            const count = orderedTeams.length;
+            // Check if count is power of 2
+            if ((count & (count - 1)) !== 0) {
+                alert("Number of teams must be a power of 2 for a balanced bracket.");
+                return null;
+            }
             const roundsCount = Math.log2(count);
-            const seeded = [...contenders].sort(() => 0.5 - Math.random());
             let rounds = [];
-            for (let r = 0; r < roundsCount; r++) {
+            // First round: place teams in order (each slot gets one team)
+            let slots = [];
+            for (let s = 0; s < count; s++) {
+                slots.push({ name: orderedTeams[s] || "", scoreLeg1: "", scoreLeg2: "", isWinner: false });
+            }
+            rounds.push({ roundIndex: 0, title: getRoundTitle(0, roundsCount), slots: slots });
+
+            // Subsequent rounds: empty slots
+            for (let r = 1; r <= roundsCount; r++) {
                 const slotsInRound = count / Math.pow(2, r);
                 let roundSlots = [];
                 for (let s = 0; s < slotsInRound; s++) {
-                    roundSlots.push({ name: r === 0 ? seeded[s] : "", scoreLeg1: "", scoreLeg2: "", isWinner: false });
+                    roundSlots.push({ name: "", scoreLeg1: "", scoreLeg2: "", isWinner: false });
                 }
-                rounds.push({ roundIndex: r, title: getRoundTitle(r, roundsCount), slots: roundSlots });
+                let title = (r === roundsCount) ? "Champion" : getRoundTitle(r, roundsCount);
+                rounds.push({ roundIndex: r, title: title, slots: roundSlots });
             }
-            rounds.push({ roundIndex: roundsCount, title: "Champion", slots: [{ name: "", isWinner: false }] });
             return rounds;
         }
 
@@ -1252,7 +1264,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: FIXTURES (bright yellow score boxes)
+        //  RENDER: FIXTURES
         // ──────────────────────────────────────────────────────────────
         function renderActiveFixturesGrid() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1306,70 +1318,41 @@
             if (!round) return;
             const slot = round.slots[slotIdx];
             if (!slot) return;
-            // If slot has no name, do nothing
             if (!slot.name || slot.name.trim() === '') return;
 
             const totalRounds = t.rounds.length;
             const isChampionRound = (roundIdx === totalRounds - 1);
-
-            // If it's the champion round, we might want to allow clearing the champion?
-            // For simplicity, we won't allow toggling the champion slot.
             if (isChampionRound) return;
 
-            // Determine the match index: slotIdx is the absolute index in the round.
-            // Each match consists of two slots: 0-1, 2-3, etc.
             const matchIdx = Math.floor(slotIdx / 2);
-            const slotInMatch = slotIdx % 2; // 0 or 1
+            const slotInMatch = slotIdx % 2;
             const otherSlotIdx = (slotInMatch === 0) ? slotIdx + 1 : slotIdx - 1;
             const otherSlot = round.slots[otherSlotIdx];
 
-            // Target slot in next round: each match maps to one slot in next round
             const nextRoundIdx = roundIdx + 1;
-            if (nextRoundIdx >= t.rounds.length) return; // shouldn't happen for non-champion rounds
+            if (nextRoundIdx >= t.rounds.length) return;
             const targetSlot = t.rounds[nextRoundIdx].slots[matchIdx];
 
-            // If the clicked slot is already a winner, we clear the winner status
             if (slot.isWinner) {
-                // Clear this slot's winner flag
                 slot.isWinner = false;
-                // Also clear the other slot's winner flag (if any)
                 if (otherSlot) otherSlot.isWinner = false;
-                // Clear the target slot's name
                 targetSlot.name = '';
-                // Save and re-render
                 saveTournamentsToStorage();
                 renderActiveBracket();
                 updateConnectors();
                 return;
             }
 
-            // Otherwise, set this slot as winner
-            // First, clear any existing winner in the other slot
             if (otherSlot) otherSlot.isWinner = false;
-            // Clear any existing winner in the target slot's name (we will overwrite)
-            // Actually, we want to set the target slot name to this slot's name
             targetSlot.name = slot.name;
-            // Set this slot as winner
             slot.isWinner = true;
-
-            // Also, we might want to clear any winner flags in the target slot itself (it's a slot in next round)
-            // But the target slot might already have isWinner flag if it was previously advanced.
-            // However, since we are overwriting its name, we should also clear its winner flag
-            // because it no longer represents a winner from its own match (it's just a placeholder).
-            // Actually, the target slot's isWinner should be determined by its own match, not by being filled.
-            // So we leave it as is; it will be set when that match's winner is toggled.
-            // But we need to clear any stale winner flag from the target slot if it was set from before.
-            // Since we only set isWinner on slots that are explicitly clicked, we can clear it here.
             targetSlot.isWinner = false;
 
-            // Save and re-render
             saveTournamentsToStorage();
             renderActiveBracket();
             updateConnectors();
 
-            // If this was the final match (i.e., next round is champion round), we might want to show confetti
             if (nextRoundIdx === totalRounds - 1) {
-                // Check if champion slot has a name
                 const champSlot = t.rounds[totalRounds - 1].slots[0];
                 if (champSlot.name && champSlot.name !== '') {
                     celebrate();
@@ -1378,7 +1361,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  SCORE CHANGE HANDLER (for knockout) – no auto advancement
+        //  SCORE CHANGE HANDLER (for knockout)
         // ──────────────────────────────────────────────────────────────
         function handleScoreChange(roundIdx, slotIdx, field, val) {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1386,13 +1369,12 @@
             if (!t.rounds[roundIdx] || !t.rounds[roundIdx].slots[slotIdx]) return;
             t.rounds[roundIdx].slots[slotIdx][field] = val;
             saveTournamentsToStorage();
-            // Just re-render the bracket to show the new scores, but do NOT recompute winners
             renderActiveBracket();
             updateConnectors();
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: KNOCKOUT BRACKET with paired spacing
+        //  RENDER: KNOCKOUT BRACKET
         // ──────────────────────────────────────────────────────────────
         function renderActiveBracket() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1414,7 +1396,6 @@
                 col.innerHTML = `<div class="col-title">${round.title}</div>`;
 
                 if (isChamp) {
-                    // Champion column: single slot
                     const slot = round.slots[0];
                     const div = document.createElement('div');
                     div.className = "slot champion-slot";
@@ -1440,7 +1421,6 @@
                         `;
                     col.appendChild(div);
                 } else {
-                    // Non-champion rounds: render each slot individually with pair spacing
                     const slots = round.slots;
                     const isFinals = rIdx === t.rounds.length - 2;
 
@@ -1448,14 +1428,12 @@
                         const div = document.createElement('div');
                         let slotClasses = `slot ${slot.isWinner ? 'winner-slot' : ''}`;
 
-                        // Apply margin classes based on position in pair
                         if (sIdx % 2 === 0) {
                             slotClasses += ' slot-pair-first';
                         } else {
                             slotClasses += ' slot-pair-second';
                         }
 
-                        // Additional spacing for first round
                         if (rIdx === 0) {
                             slotClasses += ' slot-first-round';
                         }
@@ -1471,13 +1449,11 @@
                         nameInput.className = `name-input ${slot.isWinner ? 'winner-name' : ''}`;
                         nameInput.style.borderRadius = '9999px 0 0 9999px';
                         nameInput.readOnly = true;
-                        // Add click handler to toggle winner
                         nameInput.onclick = function(e) {
                             e.stopPropagation();
                             toggleWinner(rIdx, sIdx);
                         };
 
-                        // First leg score input
                         const score1 = document.createElement('input');
                         score1.type = 'text';
                         score1.inputMode = 'numeric';
@@ -1640,34 +1616,141 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  ADVANCE GROUP QUALIFIERS → KNOCKOUT
+        //  ADVANCE GROUP QUALIFIERS → KNOCKOUT (with specific pairings)
         // ──────────────────────────────────────────────────────────────
         function advanceGroupQualifiers() {
             const t = tournaments.find(x => x.id === activeTournamentId);
             if (!t || !t.groups) return;
 
-            let advanced = [];
+            // Check if all matches are played? We'll allow even if not all played, but warn.
             let unplayed = false;
             t.groups.forEach(group => {
-                const standings = getGroupStandings(group);
                 group.matches.forEach(m => { if (m.homeScore === "" || m.awayScore === "") unplayed = true; });
-                const q = t.groupSettings.qualifiersPerGroup;
-                for (let i = 0; i < Math.min(q, standings.length); i++) advanced.push(standings[i].team);
+            });
+            if (unplayed && !confirm("Some group match scores are empty! Advance with current standings?")) return;
+
+            // Get standings for each group and extract top qualifiers
+            const groupNames = t.groups.map(g => g.name).sort(); // e.g., ["Group A", "Group B", ...]
+            const numGroups = groupNames.length;
+            const qualifiersPerGroup = t.groupSettings.qualifiersPerGroup || 4;
+
+            // Collect top teams per group in order: position 1,2,3,4
+            const groupPositions = {};
+            groupNames.forEach(gName => {
+                const group = t.groups.find(g => g.name === gName);
+                if (!group) return;
+                const standings = getGroupStandings(group);
+                // Take top qualifiersPerGroup
+                const top = standings.slice(0, qualifiersPerGroup).map(s => s.team);
+                // Pad with empty strings if fewer teams (shouldn't happen if group size >= qualifiers)
+                while (top.length < qualifiersPerGroup) top.push('');
+                groupPositions[gName] = top; // array where index 0 = 1st, 1 = 2nd, etc.
             });
 
-            if (unplayed && !confirm("Some group match scores are empty! Advance with current standings?")) return;
-            if (advanced.length < 2) { alert("Need at least 2 qualified players!"); return; }
+            // Now generate pairings based on scenarios
+            let pairs = [];
 
-            let pow2 = 2;
-            while (pow2 * 2 <= advanced.length) pow2 *= 2;
-            const trimmed = advanced.slice(0, pow2);
-
-            if (confirm(`Advancing ${trimmed.length} teams into Knockout. Proceed?`)) {
-                t.rounds = buildInitialKnockoutRounds(trimmed);
-                t.champion = "";
-                saveTournamentsToStorage();
-                switchActiveTab('knockout');
+            if (numGroups === 4 && qualifiersPerGroup === 4) {
+                // R16: A1 vs D4, C4 vs B1, A2 vs D3, C3 vs B2, A3 vs D2, C2 vs B3, A4 vs D1, C1 vs B4
+                const A = groupPositions["Group A"] || [];
+                const B = groupPositions["Group B"] || [];
+                const C = groupPositions["Group C"] || [];
+                const D = groupPositions["Group D"] || [];
+                pairs = [
+                    [A[0], D[3]],
+                    [C[3], B[0]],
+                    [A[1], D[2]],
+                    [C[2], B[1]],
+                    [A[2], D[1]],
+                    [C[1], B[2]],
+                    [A[3], D[0]],
+                    [C[0], B[3]]
+                ];
+            } else if (numGroups === 4 && qualifiersPerGroup === 2) {
+                // QF: A1 vs D2, C2 vs B1, A2 vs D1, C1 vs B2
+                const A = groupPositions["Group A"] || [];
+                const B = groupPositions["Group B"] || [];
+                const C = groupPositions["Group C"] || [];
+                const D = groupPositions["Group D"] || [];
+                pairs = [
+                    [A[0], D[1]],
+                    [C[1], B[0]],
+                    [A[1], D[0]],
+                    [C[0], B[1]]
+                ];
+            } else if (numGroups === 2 && qualifiersPerGroup === 4) {
+                // QF: A1 vs B4, A2 vs B3, A3 vs B2, A4 vs B1
+                const A = groupPositions["Group A"] || [];
+                const B = groupPositions["Group B"] || [];
+                pairs = [
+                    [A[0], B[3]],
+                    [A[1], B[2]],
+                    [A[2], B[1]],
+                    [A[3], B[0]]
+                ];
+            } else if (numGroups === 2 && qualifiersPerGroup === 2) {
+                // SF: A1 vs B2, A2 vs B1
+                const A = groupPositions["Group A"] || [];
+                const B = groupPositions["Group B"] || [];
+                pairs = [
+                    [A[0], B[1]],
+                    [A[1], B[0]]
+                ];
+            } else {
+                alert("Unsupported group/qualifier configuration. Please use one of the defined scenarios.");
+                return;
             }
+
+            // Filter out any pairs with empty strings (should not happen)
+            pairs = pairs.filter(pair => pair[0] && pair[1]);
+
+            // Flatten pairs into ordered list for bracket: [team1, team2, team3, team4, ...]
+            const orderedTeams = [];
+            pairs.forEach(pair => {
+                orderedTeams.push(pair[0]);
+                orderedTeams.push(pair[1]);
+            });
+
+            // Validate total teams is power of 2
+            const count = orderedTeams.length;
+            if ((count & (count - 1)) !== 0) {
+                alert("Total number of qualified teams is not a power of 2. Please check group settings.");
+                return;
+            }
+
+            // Build knockout rounds with this order
+            const rounds = buildKnockoutRoundsFromOrder(orderedTeams);
+            if (!rounds) return;
+
+            t.rounds = rounds;
+            t.champion = "";
+            saveTournamentsToStorage();
+            switchActiveTab('knockout');
+        }
+
+        // ──────────────────────────────────────────────────────────────
+        //  BUILD INITIAL KNOCKOUT ROUNDS (used for direct knockout creation)
+        // ──────────────────────────────────────────────────────────────
+        function buildInitialKnockoutRounds(contenders) {
+            // For direct knockout creation, we shuffle and use standard bracket
+            const count = contenders.length;
+            if ((count & (count - 1)) !== 0) {
+                alert("Number of teams must be a power of 2 for a balanced bracket.");
+                return null;
+            }
+            const roundsCount = Math.log2(count);
+            const seeded = [...contenders].sort(() => 0.5 - Math.random());
+            let rounds = [];
+            for (let r = 0; r < roundsCount; r++) {
+                const slotsInRound = count / Math.pow(2, r);
+                let roundSlots = [];
+                for (let s = 0; s < slotsInRound; s++) {
+                    roundSlots.push({ name: r === 0 ? seeded[s] : "", scoreLeg1: "", scoreLeg2: "", isWinner: false });
+                }
+                rounds.push({ roundIndex: r, title: getRoundTitle(r, roundsCount), slots: roundSlots });
+            }
+            rounds.push({ roundIndex: roundsCount, title: "Champion", slots: [{ name: "", isWinner: false }] });
+            return rounds;
         }
 
         // ──────────────────────────────────────────────────────────────
@@ -1704,11 +1787,11 @@
                 }
             };
             reader.readAsText(file);
-            event.target.value = ''; // reset input
+            event.target.value = '';
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  SCHEDULE UPDATE (for connectors)
+        //  SCHEDULE UPDATE
         // ──────────────────────────────────────────────────────────────
         let updatePending = false;
 
