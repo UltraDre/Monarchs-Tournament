@@ -131,7 +131,7 @@
             overflow: hidden;
             flex-shrink: 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
-            cursor: default;
+            cursor: pointer;
             border-radius: 9999px 0 0 9999px;
         }
 
@@ -151,6 +151,7 @@
             border: 2px solid #ffd13b;
             box-shadow: 0 0 18px rgba(255, 215, 0, 0.35);
             background: #fffbe6;
+            cursor: pointer;
         }
 
         .score-input {
@@ -431,6 +432,10 @@
         .bracket-wrapper {
             overflow: auto;
             max-height: 90vh;
+        }
+
+        .name-input.clickable {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -787,7 +792,7 @@
                 if (t.rounds && t.rounds.length > 0) {
                     guard.classList.add('hidden');
                     renderActiveBracket();
-                    recomputeKnockout();
+                    updateConnectors(); // just update connectors
                 } else {
                     guard.classList.remove('hidden');
                 }
@@ -807,7 +812,7 @@
                 renderActiveFixturesGrid();
             } else if (currentWorkspaceTab === 'knockout') {
                 renderActiveBracket();
-                recomputeKnockout();
+                updateConnectors();
             }
         }
 
@@ -1151,7 +1156,7 @@
                 document.getElementById('tab-view-knockout').classList.remove('hidden');
                 document.getElementById('knockout-guard-overlay').classList.add('hidden');
                 renderActiveBracket();
-                recomputeKnockout();
+                updateConnectors();
             } else {
                 document.getElementById('active-nav-tabs').classList.remove('hidden');
                 switchActiveTab('groups');
@@ -1287,140 +1292,88 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  KNOCKOUT AUTO-ADVANCE & CANCELLATION (0-0 aggregate = cancelled)
+        //  KNOCKOUT WINNER TOGGLE (manual advancement)
         // ──────────────────────────────────────────────────────────────
-
-        function recomputeKnockout() {
+        function toggleWinner(roundIdx, slotIdx) {
             const t = tournaments.find(x => x.id === activeTournamentId);
-            if (!t || !t.rounds || t.rounds.length < 2) return;
+            if (!t || !t.rounds) return;
+            const round = t.rounds[roundIdx];
+            if (!round) return;
+            const slot = round.slots[slotIdx];
+            if (!slot) return;
+            // If slot has no name, do nothing
+            if (!slot.name || slot.name.trim() === '') return;
 
             const totalRounds = t.rounds.length;
+            const isChampionRound = (roundIdx === totalRounds - 1);
 
-            // Clear all isWinner flags
-            for (let r = 0; r < totalRounds; r++) {
-                t.rounds[r].slots.forEach(slot => {
-                    slot.isWinner = false;
-                });
+            // If it's the champion round, we might want to allow clearing the champion?
+            // For simplicity, we won't allow toggling the champion slot.
+            if (isChampionRound) return;
+
+            // Determine the match index: slotIdx is the absolute index in the round.
+            // Each match consists of two slots: 0-1, 2-3, etc.
+            const matchIdx = Math.floor(slotIdx / 2);
+            const slotInMatch = slotIdx % 2; // 0 or 1
+            const otherSlotIdx = (slotInMatch === 0) ? slotIdx + 1 : slotIdx - 1;
+            const otherSlot = round.slots[otherSlotIdx];
+
+            // Target slot in next round: each match maps to one slot in next round
+            const nextRoundIdx = roundIdx + 1;
+            if (nextRoundIdx >= t.rounds.length) return; // shouldn't happen for non-champion rounds
+            const targetSlot = t.rounds[nextRoundIdx].slots[matchIdx];
+
+            // If the clicked slot is already a winner, we clear the winner status
+            if (slot.isWinner) {
+                // Clear this slot's winner flag
+                slot.isWinner = false;
+                // Also clear the other slot's winner flag (if any)
+                if (otherSlot) otherSlot.isWinner = false;
+                // Clear the target slot's name
+                targetSlot.name = '';
+                // Save and re-render
+                saveTournamentsToStorage();
+                renderActiveBracket();
+                updateConnectors();
+                return;
             }
 
-            function getTotal(slot) {
-                const v1 = parseFloat(slot.scoreLeg1);
-                const v2 = parseFloat(slot.scoreLeg2);
-                if (isNaN(v1) && isNaN(v2)) return NaN;
-                let total = 0;
-                if (!isNaN(v1)) total += v1;
-                if (!isNaN(v2)) total += v2;
-                return total;
-            }
+            // Otherwise, set this slot as winner
+            // First, clear any existing winner in the other slot
+            if (otherSlot) otherSlot.isWinner = false;
+            // Clear any existing winner in the target slot's name (we will overwrite)
+            // Actually, we want to set the target slot name to this slot's name
+            targetSlot.name = slot.name;
+            // Set this slot as winner
+            slot.isWinner = true;
 
-            // Process rounds from 0 to totalRounds-2
-            for (let r = 0; r < totalRounds - 1; r++) {
-                const slots = t.rounds[r].slots;
-                const nextSlots = t.rounds[r + 1].slots;
-                const matchCount = slots.length / 2;
+            // Also, we might want to clear any winner flags in the target slot itself (it's a slot in next round)
+            // But the target slot might already have isWinner flag if it was previously advanced.
+            // However, since we are overwriting its name, we should also clear its winner flag
+            // because it no longer represents a winner from its own match (it's just a placeholder).
+            // Actually, the target slot's isWinner should be determined by its own match, not by being filled.
+            // So we leave it as is; it will be set when that match's winner is toggled.
+            // But we need to clear any stale winner flag from the target slot if it was set from before.
+            // Since we only set isWinner on slots that are explicitly clicked, we can clear it here.
+            targetSlot.isWinner = false;
 
-                for (let m = 0; m < matchCount; m++) {
-                    const idxA = 2 * m;
-                    const idxB = 2 * m + 1;
-                    const slotA = slots[idxA];
-                    const slotB = slots[idxB];
-                    const target = nextSlots[m];
-
-                    const totalA = getTotal(slotA);
-                    const totalB = getTotal(slotB);
-
-                    // Cancellation: if both totals are 0 and both legs are numeric (i.e., played 0-0)
-                    const playedA = (slotA.scoreLeg1 !== '' && slotA.scoreLeg1 !== undefined) || (slotA.scoreLeg2 !== '' &&
-                        slotA.scoreLeg2 !== undefined);
-                    const playedB = (slotB.scoreLeg1 !== '' && slotB.scoreLeg1 !== undefined) || (slotB.scoreLeg2 !== '' &&
-                        slotB.scoreLeg2 !== undefined);
-                    const bothPlayed = playedA && playedB;
-                    const isZeroZero = (totalA === 0 && totalB === 0);
-
-                    if (bothPlayed && isZeroZero) {
-                        // cancelled – no winner
-                        target.name = '';
-                        slotA.isWinner = false;
-                        slotB.isWinner = false;
-                        continue;
-                    }
-
-                    if (isNaN(totalA) && isNaN(totalB)) {
-                        continue;
-                    }
-
-                    if (isNaN(totalA) || isNaN(totalB)) {
-                        continue;
-                    }
-
-                    if (totalA > totalB) {
-                        slotA.isWinner = true;
-                        slotB.isWinner = false;
-                        target.name = slotA.name;
-                    } else if (totalB > totalA) {
-                        slotB.isWinner = true;
-                        slotA.isWinner = false;
-                        target.name = slotB.name;
-                    } else {
-                        // draw – no winner (unless 0-0 handled above)
-                        target.name = '';
-                        slotA.isWinner = false;
-                        slotB.isWinner = false;
-                    }
-                }
-            }
-
-            // Handle byes
-            for (let r = 0; r < totalRounds - 1; r++) {
-                const slots = t.rounds[r + 1].slots;
-                const matchCount = slots.length / 2;
-                for (let m = 0; m < matchCount; m++) {
-                    const idxA = 2 * m;
-                    const idxB = 2 * m + 1;
-                    const slotA = slots[idxA];
-                    const slotB = slots[idxB];
-                    const hasScores = (slotA.scoreLeg1 !== '' && slotA.scoreLeg1 !== undefined) ||
-                        (slotA.scoreLeg2 !== '' && slotA.scoreLeg2 !== undefined) ||
-                        (slotB.scoreLeg1 !== '' && slotB.scoreLeg1 !== undefined) ||
-                        (slotB.scoreLeg2 !== '' && slotB.scoreLeg2 !== undefined);
-                    if (hasScores) continue;
-
-                    const nameA = slotA.name || '';
-                    const nameB = slotB.name || '';
-                    if (nameA && !nameB) {
-                        slotA.isWinner = true;
-                        slotB.isWinner = false;
-                        if (r + 2 < totalRounds) {
-                            const targetSlot = t.rounds[r + 2].slots[Math.floor(m / 2)];
-                            if (targetSlot) {
-                                targetSlot.name = nameA;
-                            }
-                        }
-                    } else if (nameB && !nameA) {
-                        slotB.isWinner = true;
-                        slotA.isWinner = false;
-                        if (r + 2 < totalRounds) {
-                            const targetSlot = t.rounds[r + 2].slots[Math.floor(m / 2)];
-                            if (targetSlot) {
-                                targetSlot.name = nameB;
-                            }
-                        }
-                    }
-                }
-            }
-
+            // Save and re-render
             saveTournamentsToStorage();
             renderActiveBracket();
-            scheduleUpdate();
+            updateConnectors();
 
-            const champSlot = t.rounds[t.rounds.length - 1].slots[0];
-            if (champSlot.name && champSlot.name !== '') {
-                celebrate();
+            // If this was the final match (i.e., next round is champion round), we might want to show confetti
+            if (nextRoundIdx === totalRounds - 1) {
+                // Check if champion slot has a name
+                const champSlot = t.rounds[totalRounds - 1].slots[0];
+                if (champSlot.name && champSlot.name !== '') {
+                    celebrate();
+                }
             }
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  SCORE CHANGE HANDLER (for knockout)
+        //  SCORE CHANGE HANDLER (for knockout) – no auto advancement
         // ──────────────────────────────────────────────────────────────
         function handleScoreChange(roundIdx, slotIdx, field, val) {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1428,11 +1381,13 @@
             if (!t.rounds[roundIdx] || !t.rounds[roundIdx].slots[slotIdx]) return;
             t.rounds[roundIdx].slots[slotIdx][field] = val;
             saveTournamentsToStorage();
-            recomputeKnockout();
+            // Just re-render the bracket to show the new scores, but do NOT recompute winners
+            renderActiveBracket();
+            updateConnectors();
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: KNOCKOUT BRACKET with paired spacing (no wrapper)
+        //  RENDER: KNOCKOUT BRACKET with paired spacing
         // ──────────────────────────────────────────────────────────────
         function renderActiveBracket() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1490,10 +1445,8 @@
 
                         // Apply margin classes based on position in pair
                         if (sIdx % 2 === 0) {
-                            // First in pair: small gap to next (second)
                             slotClasses += ' slot-pair-first';
                         } else {
-                            // Second in pair: larger gap to next pair
                             slotClasses += ' slot-pair-second';
                         }
 
@@ -1513,6 +1466,11 @@
                         nameInput.className = `name-input ${slot.isWinner ? 'winner-name' : ''}`;
                         nameInput.style.borderRadius = '9999px 0 0 9999px';
                         nameInput.readOnly = true;
+                        // Add click handler to toggle winner
+                        nameInput.onclick = function(e) {
+                            e.stopPropagation();
+                            toggleWinner(rIdx, sIdx);
+                        };
 
                         // First leg score input
                         const score1 = document.createElement('input');
@@ -1522,7 +1480,6 @@
                         score1.placeholder = '-';
                         score1.maxLength = 2;
                         score1.className = 'score-input score-gold';
-                        // Use oninput property for reliable event handling
                         score1.oninput = function() {
                             handleScoreChange(rIdx, sIdx, 'scoreLeg1', this.value);
                         };
@@ -1559,7 +1516,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  CONNECTOR LINES (unchanged)
+        //  CONNECTOR LINES
         // ──────────────────────────────────────────────────────────────
         function updateConnectors() {
             const svg = document.getElementById('connector-svg');
