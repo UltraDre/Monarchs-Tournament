@@ -426,17 +426,19 @@
             cursor: pointer;
         }
 
-        /* Floating controls - no bar */
+        /* Sticky controls - part of page flow, good for screenshots */
         .floating-controls {
-            position: fixed;
-            top: 12px;
-            left: 0;
-            right: 0;
+            position: sticky;
+            top: 0;
             z-index: 50;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 12px 20px;
+            background: rgba(13, 15, 26, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
             pointer-events: none;
         }
         .floating-controls>* {
@@ -525,7 +527,7 @@
         }
 
         .main-content {
-            padding-top: 72px;
+            padding-top: 0;
         }
 
         /* hide tabs when not needed */
@@ -542,7 +544,7 @@
     <!-- MAIN APP -->
     <div id="app" class="flex flex-col min-h-screen">
 
-        <!-- FLOATING CONTROLS (no bar) -->
+        <!-- STICKY CONTROLS (part of page flow) -->
         <div class="floating-controls">
             <!-- Left: Back + Home -->
             <div class="left-buttons">
