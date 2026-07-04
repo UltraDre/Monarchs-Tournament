@@ -83,12 +83,12 @@
         #connector-svg path.winner-path {
             filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.55));
             stroke: #ffd13b;
-            stroke-width: 4px;
+            stroke-width: 8px;
         }
 
         #connector-svg path.default-path {
-            stroke: rgba(255, 255, 255, 0.25);
-            stroke-width: 2.5px;
+            stroke: rgba(255, 255, 255, 0.45);
+            stroke-width: 5px;
         }
 
         .slot {
@@ -101,10 +101,21 @@
             z-index: 10;
             cursor: default;
             margin: 0 auto;
+            padding: 2px 0;
+        }
+
+        .slot-pair-first {
+            margin-bottom: 2px;
+        }
+        .slot-pair-second {
+            margin-bottom: 28px;
+        }
+        .slot-pair-second:last-child {
+            margin-bottom: 0;
         }
 
         .name-input {
-            width: 135px;
+            width: 145px;
             height: 36px;
             padding: 0 14px;
             font-size: 10px;
@@ -184,14 +195,16 @@
             flex-direction: row;
             align-items: center;
             gap: 12px;
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         .champion-slot .name-input {
-            width: 140px;
-            height: 36px;
+            width: 160px;
+            height: 40px;
             border-radius: 9999px !important;
             text-align: center !important;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 900;
             border: 2px solid #e5c122;
             background: #ffffff;
@@ -201,8 +214,8 @@
         }
 
         .trophy-svg {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.35));
             animation: float 4s ease-in-out infinite;
         }
@@ -282,9 +295,9 @@
 
         .bracket-col {
             flex: 1 1 0;
-            min-width: 0;
+            min-width: 200px;
             position: relative;
-            padding: 0 6px;
+            padding: 0 24px;
             display: flex;
             flex-direction: column;
             flex: 1 1 0;
@@ -293,20 +306,20 @@
 
         .bracket-col .col-title {
             text-align: center;
-            font-size: 9px;
+            font-size: 11px;
             font-weight: 900;
-            letter-spacing: 0.25em;
-            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.3em;
+            color: rgba(255, 255, 255, 0.3);
             text-transform: uppercase;
-            margin-bottom: 6px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 24px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             flex-shrink: 0;
         }
 
         .champion-col {
-            flex: 0 0 180px !important;
-            min-width: 160px;
+            flex: 0 0 220px !important;
+            min-width: 200px;
             justify-content: center;
             align-items: center;
         }
@@ -413,6 +426,11 @@
             max-width: 768px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .bracket-wrapper {
+            overflow: auto;
+            max-height: 90vh;
         }
     </style>
 </head>
@@ -625,7 +643,7 @@
         </main>
 
         <!-- Knockout -->
-        <main id="tab-view-knockout" class="hidden flex-grow w-full overflow-x-auto overflow-y-hidden flex items-center justify-center p-4 md:p-8 bracket-wrapper relative">
+        <main id="tab-view-knockout" class="hidden flex-grow w-full overflow-x-auto overflow-y-auto flex items-start justify-center p-4 md:p-8 bracket-wrapper relative">
 
             <div id="knockout-guard-overlay" class="absolute inset-0 z-40 bg-[#0d0f1a]/95 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
                 <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
@@ -636,9 +654,9 @@
                 <button onclick="advanceGroupQualifiers()" class="gradient-btn px-6 py-2.5 rounded-full text-xs font-black tracking-wider uppercase flex items-center gap-1.5"><i class="fa-solid fa-forward-fast"></i> Seed Knockout Stage Now</button>
             </div>
 
-            <div id="bracket-container" class="relative w-full max-w-[1500px]">
+            <div id="bracket-container" class="relative w-full max-w-[2400px]">
                 <svg id="connector-svg"></svg>
-                <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full h-[780px] relative gap-4">
+                <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full h-[2400px] relative gap-16">
                     <!-- Dynamic Bracket Columns -->
                 </div>
             </div>
@@ -801,11 +819,11 @@
             grid.innerHTML = '';
             if (tournaments.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-1 md:col-span-2 glass-card p-8 rounded-xl text-center space-y-2">
-                        <p class="text-sm text-gray-400 font-medium">No tournament brackets generated yet.</p>
-                        <button onclick="showCreateView()" class="inline-flex items-center gap-1.5 text-xs text-[#ffd13b] font-bold hover:underline">Create a tournament <i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                `;
+                        <div class="col-span-1 md:col-span-2 glass-card p-8 rounded-xl text-center space-y-2">
+                            <p class="text-sm text-gray-400 font-medium">No tournament brackets generated yet.</p>
+                            <button onclick="showCreateView()" class="inline-flex items-center gap-1.5 text-xs text-[#ffd13b] font-bold hover:underline">Create a tournament <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    `;
                 return;
             }
             tournaments.forEach(t => {
@@ -815,23 +833,23 @@
                     `${t.entrants.length} Entrants · Direct Elimination Bracket` :
                     `${t.entrants.length} Entrants · ${t.groups.length} Groups · Group & Knockout`;
                 card.innerHTML = `
-                    <div class="space-y-1.5 mb-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[9px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider ${t.format === 'knockout' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">
-                                ${t.format === 'knockout' ? 'Knockout' : 'Groups + KO'}
-                            </span>
-                            <div class="flex items-center gap-2">
-                                <button onclick="openEditPlayersModal('${t.id}', event)" class="text-gray-400 hover:text-[#ffd13b] p-1.5 transition" title="Edit Players"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteTournament('${t.id}', event)" class="text-gray-400 hover:text-rose-400 p-1.5 transition" title="Delete Tournament"><i class="fa-solid fa-trash-can"></i></button>
+                        <div class="space-y-1.5 mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[9px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider ${t.format === 'knockout' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">
+                                    ${t.format === 'knockout' ? 'Knockout' : 'Groups + KO'}
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="openEditPlayersModal('${t.id}', event)" class="text-gray-400 hover:text-[#ffd13b] p-1.5 transition" title="Edit Players"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button onclick="deleteTournament('${t.id}', event)" class="text-gray-400 hover:text-rose-400 p-1.5 transition" title="Delete Tournament"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
                             </div>
+                            <h4 class="text-sm font-black text-white uppercase tracking-wide truncate max-w-[250px]">${t.name}</h4>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${statsText}</p>
                         </div>
-                        <h4 class="text-sm font-black text-white uppercase tracking-wide truncate max-w-[250px]">${t.name}</h4>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${statsText}</p>
-                    </div>
-                    <button onclick="launchTournament('${t.id}')" class="w-full py-2.5 rounded-lg secondary-btn text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-circle-play text-xs text-[#ffd13b]"></i> Launch Match
-                    </button>
-                `;
+                        <button onclick="launchTournament('${t.id}')" class="w-full py-2.5 rounded-lg secondary-btn text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-circle-play text-xs text-[#ffd13b]"></i> Launch Match
+                        </button>
+                    `;
                 grid.appendChild(card);
             });
         }
@@ -858,9 +876,9 @@
                 const div = document.createElement('div');
                 div.className = "flex items-center gap-3";
                 div.innerHTML = `
-                    <span class="text-xs font-black text-gray-500 w-8 text-right">#${index+1}</span>
-                    <input type="text" value="${entrant}" class="flex-grow px-3 py-2 rounded bg-[#0b0e1a] border border-white/10 text-white font-semibold text-xs tracking-wide focus:outline-none focus:border-[#ffd13b]" data-index="${index}" />
-                `;
+                        <span class="text-xs font-black text-gray-500 w-8 text-right">#${index+1}</span>
+                        <input type="text" value="${entrant}" class="flex-grow px-3 py-2 rounded bg-[#0b0e1a] border border-white/10 text-white font-semibold text-xs tracking-wide focus:outline-none focus:border-[#ffd13b]" data-index="${index}" />
+                    `;
                 container.appendChild(div);
             });
             document.getElementById('edit-players-modal').classList.remove('hidden');
@@ -1157,40 +1175,40 @@
                     const isQual = pos < t.groupSettings.qualifiersPerGroup;
                     const badge = isQual ? 'bg-[#27ae60]' : 'bg-[#e74c3c]';
                     rows += `
-                        <tr class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-all font-bold text-gray-300">
-                            <td class="py-2 text-center"><span class="inline-block w-5 py-0.5 rounded text-white font-black text-[9px] ${badge}">${pos+1}</span></td>
-                            <td class="py-2 font-semibold text-white tracking-wide truncate max-w-[130px]">${s.team}</td>
-                            <td class="py-2 text-center text-gray-400">${s.played}</td>
-                            <td class="py-2 text-center text-emerald-400">${s.wins}</td>
-                            <td class="py-2 text-center text-amber-500">${s.draws}</td>
-                            <td class="py-2 text-center text-rose-400">${s.losses}</td>
-                            <td class="py-2 text-center text-gray-400">${s.gf}</td>
-                            <td class="py-2 text-center text-gray-400">${s.ga}</td>
-                            <td class="py-2 text-center text-blue-400">${s.gd>0?'+':''}${s.gd}</td>
-                            <td class="py-2 text-center font-black text-[#ffd13b]">${s.pts}</td>
-                        </tr>
-                    `;
+                            <tr class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-all font-bold text-gray-300">
+                                <td class="py-2 text-center"><span class="inline-block w-5 py-0.5 rounded text-white font-black text-[9px] ${badge}">${pos+1}</span></td>
+                                <td class="py-2 font-semibold text-white tracking-wide truncate max-w-[130px]">${s.team}</td>
+                                <td class="py-2 text-center text-gray-400">${s.played}</td>
+                                <td class="py-2 text-center text-emerald-400">${s.wins}</td>
+                                <td class="py-2 text-center text-amber-500">${s.draws}</td>
+                                <td class="py-2 text-center text-rose-400">${s.losses}</td>
+                                <td class="py-2 text-center text-gray-400">${s.gf}</td>
+                                <td class="py-2 text-center text-gray-400">${s.ga}</td>
+                                <td class="py-2 text-center text-blue-400">${s.gd>0?'+':''}${s.gd}</td>
+                                <td class="py-2 text-center font-black text-[#ffd13b]">${s.pts}</td>
+                            </tr>
+                        `;
                 });
                 card.innerHTML = `
-                    <div class="border-b border-white/5 pb-2"><h3 class="text-xs font-black text-[#ffd13b] tracking-[0.2em] uppercase text-center">${group.name}</h3></div>
-                    <div class="w-full">
-                        <table class="w-full text-left border-collapse table-fixed">
-                            <thead><tr class="font-black text-gray-400 tracking-wider uppercase border-b border-white/5">
-                                <th class="py-2 text-center w-[10%]">S/N</th>
-                                <th class="py-2 text-left w-[30%]">Team</th>
-                                <th class="py-2 text-center w-[7%]">MP</th>
-                                <th class="py-2 text-center w-[7%]">W</th>
-                                <th class="py-2 text-center w-[7%]">D</th>
-                                <th class="py-2 text-center w-[7%]">L</th>
-                                <th class="py-2 text-center w-[7%]">GF</th>
-                                <th class="py-2 text-center w-[7%]">GA</th>
-                                <th class="py-2 text-center w-[8%]">GD</th>
-                                <th class="py-2 text-center w-[10%]">Pts</th>
-                            </tr></thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                `;
+                        <div class="border-b border-white/5 pb-2"><h3 class="text-xs font-black text-[#ffd13b] tracking-[0.2em] uppercase text-center">${group.name}</h3></div>
+                        <div class="w-full">
+                            <table class="w-full text-left border-collapse table-fixed">
+                                <thead><tr class="font-black text-gray-400 tracking-wider uppercase border-b border-white/5">
+                                    <th class="py-2 text-center w-[10%]">S/N</th>
+                                    <th class="py-2 text-left w-[30%]">Team</th>
+                                    <th class="py-2 text-center w-[7%]">MP</th>
+                                    <th class="py-2 text-center w-[7%]">W</th>
+                                    <th class="py-2 text-center w-[7%]">D</th>
+                                    <th class="py-2 text-center w-[7%]">L</th>
+                                    <th class="py-2 text-center w-[7%]">GF</th>
+                                    <th class="py-2 text-center w-[7%]">GA</th>
+                                    <th class="py-2 text-center w-[8%]">GD</th>
+                                    <th class="py-2 text-center w-[10%]">Pts</th>
+                                </tr></thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                        </div>
+                    `;
                 grid.appendChild(card);
             });
         }
@@ -1237,21 +1255,21 @@
                 let html = '';
                 group.matches.forEach(m => {
                     html += `
-                        <div class="fixture-row">
-                            <div class="team-box" title="${m.home}">${m.home}</div>
-                            <input type="text" inputmode="numeric" value="${m.homeScore??''}" placeholder="-" min="0" max="99"
-                                   class="score-box" onchange="updateGroupMatchValue('${m.id}','homeScore',this.value)" />
-                            <div class="vs-badge">VS</div>
-                            <input type="text" inputmode="numeric" value="${m.awayScore??''}" placeholder="-" min="0" max="99"
-                                   class="score-box" onchange="updateGroupMatchValue('${m.id}','awayScore',this.value)" />
-                            <div class="team-box away" title="${m.away}">${m.away}</div>
-                        </div>
-                    `;
+                            <div class="fixture-row">
+                                <div class="team-box" title="${m.home}">${m.home}</div>
+                                <input type="text" inputmode="numeric" value="${m.homeScore??''}" placeholder="-" min="0" max="99"
+                                       class="score-box" onchange="updateGroupMatchValue('${m.id}','homeScore',this.value)" />
+                                <div class="vs-badge">VS</div>
+                                <input type="text" inputmode="numeric" value="${m.awayScore??''}" placeholder="-" min="0" max="99"
+                                       class="score-box" onchange="updateGroupMatchValue('${m.id}','awayScore',this.value)" />
+                                <div class="team-box away" title="${m.away}">${m.away}</div>
+                            </div>
+                        `;
                 });
                 container.innerHTML = `
-                    <div class="border-b border-white/5 pb-2"><h3 class="text-xs font-black text-gray-300 tracking-[0.25em] uppercase">${group.name}</h3></div>
-                    <div class="flex flex-col gap-2">${html}</div>
-                `;
+                        <div class="border-b border-white/5 pb-2"><h3 class="text-xs font-black text-gray-300 tracking-[0.25em] uppercase">${group.name}</h3></div>
+                        <div class="flex flex-col gap-2">${html}</div>
+                    `;
                 grid.appendChild(container);
             });
         }
@@ -1407,13 +1425,14 @@
         function handleScoreChange(roundIdx, slotIdx, field, val) {
             const t = tournaments.find(x => x.id === activeTournamentId);
             if (!t) return;
+            if (!t.rounds[roundIdx] || !t.rounds[roundIdx].slots[slotIdx]) return;
             t.rounds[roundIdx].slots[slotIdx][field] = val;
             saveTournamentsToStorage();
             recomputeKnockout();
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: KNOCKOUT BRACKET
+        //  RENDER: KNOCKOUT BRACKET with paired spacing (no wrapper)
         // ──────────────────────────────────────────────────────────────
         function renderActiveBracket() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1428,44 +1447,62 @@
                 let className = 'bracket-col flex flex-col flex-1 relative';
                 if (isChamp) {
                     className = 'bracket-col champion-col flex flex-col justify-center items-center h-full relative';
-                } else if (rIdx === 0) {
-                    className += ' justify-evenly';
                 } else {
-                    className += ' justify-around gap-8';
+                    className += ' justify-start';
                 }
                 col.className = className;
                 col.innerHTML = `<div class="col-title">${round.title}</div>`;
 
                 if (isChamp) {
+                    // Champion column: single slot
                     const slot = round.slots[0];
                     const div = document.createElement('div');
                     div.className = "slot champion-slot";
                     div.setAttribute('data-round', rIdx);
                     div.setAttribute('data-slot', 0);
                     div.innerHTML = `
-                        <div class="flex flex-col items-center">
-                            <span class="text-[9px] font-black text-amber-500 tracking-wider mb-2">WINNER</span>
-                            <div class="flex items-center gap-3">
-                                <input type="text" id="winner-box" value="${slot.name||''}" placeholder="CROWN CHAMPION" class="name-input text-center font-black rounded-full" style="width:135px;height:36px;border:2px solid #e5c122;border-radius:9999px;" readonly />
-                                <svg class="trophy-svg" width="32" height="32" viewBox="0 0 100 100" fill="none">
-                                    <rect x="32" y="78" width="36" height="10" rx="3" fill="#151928" stroke="#8e7323" stroke-width="2"/>
-                                    <path d="M38 78 L43 66 L57 66 L62 78Z" fill="#8e7323"/>
-                                    <rect x="46" y="52" width="8" height="15" fill="#ffd13b"/>
-                                    <path d="M28 24 C16 24,16 42,28 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
-                                    <path d="M72 24 C84 24,84 42,72 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
-                                    <path d="M28 18 C28 52,72 52,72 18Z" fill="#ffd13b"/>
-                                    <rect x="25" y="14" width="50" height="5" rx="2" fill="#ffe980"/>
-                                    <polygon points="50,23 53,30 60,30 55,34 57,41 50,37 43,41 45,34 40,30 47,30" fill="#fff" opacity="0.9"/>
-                                </svg>
+                            <div class="flex flex-col items-center">
+                                <span class="text-[9px] font-black text-amber-500 tracking-wider mb-2">WINNER</span>
+                                <div class="flex items-center gap-3">
+                                    <input type="text" id="winner-box" value="${slot.name||''}" placeholder="CROWN CHAMPION" class="name-input text-center font-black rounded-full" style="width:160px;height:40px;border:2px solid #e5c122;border-radius:9999px;" readonly />
+                                    <svg class="trophy-svg" width="40" height="40" viewBox="0 0 100 100" fill="none">
+                                        <rect x="32" y="78" width="36" height="10" rx="3" fill="#151928" stroke="#8e7323" stroke-width="2"/>
+                                        <path d="M38 78 L43 66 L57 66 L62 78Z" fill="#8e7323"/>
+                                        <rect x="46" y="52" width="8" height="15" fill="#ffd13b"/>
+                                        <path d="M28 24 C16 24,16 42,28 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
+                                        <path d="M72 24 C84 24,84 42,72 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
+                                        <path d="M28 18 C28 52,72 52,72 18Z" fill="#ffd13b"/>
+                                        <rect x="25" y="14" width="50" height="5" rx="2" fill="#ffe980"/>
+                                        <polygon points="50,23 53,30 60,30 55,34 57,41 50,37 43,41 45,34 40,30 47,30" fill="#fff" opacity="0.9"/>
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
                     col.appendChild(div);
                 } else {
+                    // Non-champion rounds: render each slot individually with pair spacing
+                    const slots = round.slots;
                     const isFinals = rIdx === t.rounds.length - 2;
-                    round.slots.forEach((slot, sIdx) => {
+
+                    slots.forEach((slot, sIdx) => {
                         const div = document.createElement('div');
-                        div.className = `slot ${slot.isWinner?'winner-slot':''}`;
+                        let slotClasses = `slot ${slot.isWinner ? 'winner-slot' : ''}`;
+
+                        // Apply margin classes based on position in pair
+                        if (sIdx % 2 === 0) {
+                            // First in pair: small gap to next (second)
+                            slotClasses += ' slot-pair-first';
+                        } else {
+                            // Second in pair: larger gap to next pair
+                            slotClasses += ' slot-pair-second';
+                        }
+
+                        // Additional spacing for first round
+                        if (rIdx === 0) {
+                            slotClasses += ' slot-first-round';
+                        }
+
+                        div.className = slotClasses;
                         div.setAttribute('data-round', rIdx);
                         div.setAttribute('data-slot', sIdx);
 
@@ -1473,10 +1510,11 @@
                         nameInput.type = 'text';
                         nameInput.value = slot.name || '';
                         nameInput.placeholder = 'Undecided';
-                        nameInput.className = `name-input ${slot.isWinner?'winner-name':''}`;
+                        nameInput.className = `name-input ${slot.isWinner ? 'winner-name' : ''}`;
                         nameInput.style.borderRadius = '9999px 0 0 9999px';
                         nameInput.readOnly = true;
 
+                        // First leg score input
                         const score1 = document.createElement('input');
                         score1.type = 'text';
                         score1.inputMode = 'numeric';
@@ -1484,7 +1522,10 @@
                         score1.placeholder = '-';
                         score1.maxLength = 2;
                         score1.className = 'score-input score-gold';
-                        score1.oninput = function() { handleScoreChange(rIdx, sIdx, 'scoreLeg1', this.value); };
+                        // Use oninput property for reliable event handling
+                        score1.oninput = function() {
+                            handleScoreChange(rIdx, sIdx, 'scoreLeg1', this.value);
+                        };
 
                         let score2 = null;
                         if (!isFinals) {
@@ -1496,7 +1537,9 @@
                             score2.maxLength = 2;
                             score2.className = 'score-input score-dark';
                             score2.style.borderRadius = '0 9999px 9999px 0';
-                            score2.oninput = function() { handleScoreChange(rIdx, sIdx, 'scoreLeg2', this.value); };
+                            score2.oninput = function() {
+                                handleScoreChange(rIdx, sIdx, 'scoreLeg2', this.value);
+                            };
                         } else {
                             score1.style.borderRadius = '0 9999px 9999px 0';
                         }
@@ -1516,7 +1559,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  CONNECTOR LINES
+        //  CONNECTOR LINES (unchanged)
         // ──────────────────────────────────────────────────────────────
         function updateConnectors() {
             const svg = document.getElementById('connector-svg');
@@ -1579,9 +1622,9 @@
                     const mergeX = (Math.max(xA, xB) + xT) / 2;
 
                     const winColor = '#ffd13b';
-                    const normColor = 'rgba(255,255,255,0.25)';
-                    const winW = 4;
-                    const normW = 2.5;
+                    const normColor = 'rgba(255,255,255,0.45)';
+                    const winW = 8;
+                    const normW = 5;
 
                     addConnectorPath(svg,
                         `M ${xA} ${yA} H ${mergeX}`,
@@ -1701,11 +1744,6 @@
             reader.readAsText(file);
             event.target.value = ''; // reset input
         }
-
-        // ──────────────────────────────────────────────────────────────
-        //  SIMULATION (removed buttons, but keep function for possible use)
-        // ──────────────────────────────────────────────────────────────
-        // (kept for internal use if needed, but not called from UI)
 
         // ──────────────────────────────────────────────────────────────
         //  SCHEDULE UPDATE (for connectors)
