@@ -76,15 +76,16 @@
             stroke-linejoin: round;
         }
 
+        /* Thinner connector lines */
         #connector-svg path.winner-path {
-            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.55));
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.35));
             stroke: #ffd13b;
-            stroke-width: 8px;
+            stroke-width: 3px;
         }
 
         #connector-svg path.default-path {
-            stroke: rgba(255, 255, 255, 0.45);
-            stroke-width: 5px;
+            stroke: rgba(255, 255, 255, 0.35);
+            stroke-width: 1.5px;
         }
 
         .slot {
@@ -1747,7 +1748,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  CONNECTOR LINES
+        //  CONNECTOR LINES - THINNER
         // ──────────────────────────────────────────────────────────────
         function updateConnectors() {
             const svg = document.getElementById('connector-svg');
@@ -1809,10 +1810,11 @@
 
                     const mergeX = (Math.max(xA, xB) + xT) / 2;
 
+                    // Thinner connector lines
                     const winColor = '#ffd13b';
-                    const normColor = 'rgba(255,255,255,0.45)';
-                    const winW = 8;
-                    const normW = 5;
+                    const normColor = 'rgba(255,255,255,0.35)';
+                    const winW = 3;
+                    const normW = 1.5;
 
                     addConnectorPath(svg,
                         `M ${xA} ${yA} H ${mergeX}`,
@@ -1858,7 +1860,7 @@
             p.setAttribute('stroke-linejoin', 'round');
             if (isWinner) {
                 p.classList.add('winner-path');
-                p.setAttribute('filter', 'drop-shadow(0 0 10px rgba(255,215,0,0.6))');
+                p.setAttribute('filter', 'drop-shadow(0 0 4px rgba(255,215,0,0.35))');
             } else {
                 p.classList.add('default-path');
             }
