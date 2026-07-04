@@ -57,21 +57,6 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
         }
 
-        .glass-header {
-            background: #0d0f1a;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .pill-nav {
-            background: #14182b;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
         #connector-svg {
             position: absolute;
             inset: 0;
@@ -440,6 +425,116 @@
         .name-input.clickable {
             cursor: pointer;
         }
+
+        /* Floating controls - no bar */
+        .floating-controls {
+            position: fixed;
+            top: 12px;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+        }
+        .floating-controls>* {
+            pointer-events: auto;
+        }
+        .floating-controls .left-buttons,
+        .floating-controls .right-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .floating-controls .center-tabs {
+            display: flex;
+            justify-content: center;
+            flex: 1;
+        }
+        .floating-controls .pill-nav {
+            background: rgba(20, 24, 43, 0.7);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 9999px;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+        }
+        .floating-controls .pill-btn {
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.2s;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+        }
+        .floating-controls .pill-btn.active {
+            background: #ffd13b;
+            color: #0d0f1a;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+        }
+        .floating-controls .pill-btn:hover:not(.active) {
+            color: #fff;
+        }
+        .floating-controls .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(20, 24, 43, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #c8d0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .floating-controls .icon-btn:hover {
+            background: rgba(255,215,0,0.15);
+            color: #ffd13b;
+            border-color: rgba(255,215,0,0.3);
+        }
+        .floating-controls .icon-btn.green {
+            background: rgba(34,197,94,0.15);
+            border-color: rgba(34,197,94,0.2);
+            color: #4ade80;
+        }
+        .floating-controls .icon-btn.green:hover {
+            background: rgba(34,197,94,0.25);
+            border-color: rgba(34,197,94,0.4);
+        }
+        .floating-controls .icon-btn.blue {
+            background: rgba(59,130,246,0.15);
+            border-color: rgba(59,130,246,0.2);
+            color: #60a5fa;
+        }
+        .floating-controls .icon-btn.blue:hover {
+            background: rgba(59,130,246,0.25);
+            border-color: rgba(59,130,246,0.4);
+        }
+
+        .main-content {
+            padding-top: 72px;
+        }
+
+        /* hide tabs when not needed */
+        #active-nav-tabs .pill-nav {
+            display: flex;
+        }
+        #active-nav-tabs.hidden .pill-nav {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -447,230 +542,240 @@
     <!-- MAIN APP -->
     <div id="app" class="flex flex-col min-h-screen">
 
-        <!-- HEADER -->
-        <header class="glass-header p-4 flex items-center justify-between gap-4 sticky top-0 z-50 flex-wrap">
-            <div class="flex items-center gap-3">
-                <button onclick="goHome()" class="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-[#ffd13b] transition" title="Back to Dashboard">
-                    <i class="fa-solid fa-arrow-left text-lg"></i>
+        <!-- FLOATING CONTROLS (no bar) -->
+        <div class="floating-controls">
+            <!-- Left: Back + Home -->
+            <div class="left-buttons">
+                <button onclick="goHome()" class="icon-btn" title="Back to Dashboard">
+                    <i class="fa-solid fa-arrow-left"></i>
                 </button>
-                <button onclick="goHome()" class="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-[#ffd13b] transition" title="Dashboard">
-                    <i class="fa-solid fa-house text-lg"></i>
+                <button onclick="goHome()" class="icon-btn" title="Dashboard">
+                    <i class="fa-solid fa-house"></i>
                 </button>
             </div>
 
-            <div id="active-nav-tabs" class="hidden flex justify-center">
-                <div class="pill-nav p-1 rounded-full flex items-center gap-1 shadow-lg">
-                    <button id="tab-groups" onclick="switchActiveTab('groups')" class="pill-btn px-5 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all uppercase text-gray-400 hover:text-white">Groups</button>
-                    <button id="tab-fixtures" onclick="switchActiveTab('fixtures')" class="pill-btn px-5 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all uppercase text-gray-400 hover:text-white">Fixtures</button>
-                    <button id="tab-knockout" onclick="switchActiveTab('knockout')" class="pill-btn px-5 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all uppercase text-gray-400 hover:text-white">Knockout</button>
+            <!-- Center: Navigation Tabs (Groups, Fixtures, Knockout) -->
+            <div id="active-nav-tabs" class="center-tabs hidden">
+                <div class="pill-nav">
+                    <button id="tab-groups" onclick="switchActiveTab('groups')" class="pill-btn">Groups</button>
+                    <button id="tab-fixtures" onclick="switchActiveTab('fixtures')" class="pill-btn">Fixtures</button>
+                    <button id="tab-knockout" onclick="switchActiveTab('knockout')" class="pill-btn">Knockout</button>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2.5">
-                <div id="view-actions" class="hidden flex items-center gap-2">
-                    <button onclick="downloadBackup()" class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-extrabold text-[11px] tracking-wider rounded-full hover:scale-105 shadow-lg transition-all"><i class="fa-solid fa-download"></i> BACKUP</button>
-                    <button onclick="document.getElementById('upload-input').click()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-extrabold text-[11px] tracking-wider rounded-full hover:scale-105 shadow-lg transition-all"><i class="fa-solid fa-upload"></i> RESTORE</button>
-                    <input type="file" id="upload-input" accept=".json" style="display:none" onchange="uploadBackup(event)" />
-                </div>
+            <!-- Right: Backup + Restore -->
+            <div id="view-actions" class="right-buttons hidden">
+                <button onclick="downloadBackup()" class="icon-btn green" title="Download Backup">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+                <button onclick="document.getElementById('upload-input').click()" class="icon-btn blue" title="Restore Backup">
+                    <i class="fa-solid fa-upload"></i>
+                </button>
+                <input type="file" id="upload-input" accept=".json" style="display:none" onchange="uploadBackup(event)" />
             </div>
-        </header>
+        </div>
 
-        <!-- HOME VIEW -->
-        <main id="home-view" class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-6xl mx-auto w-full gap-8">
-            <div class="w-full text-center space-y-3 mb-4">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ffd13b]/10 to-[#a07d0f]/10 border border-[#ffd13b]/20 mb-2">
-                    <i class="fa-solid fa-trophy text-3xl text-[#ffd13b] drop-shadow-[0_0_10px_rgba(255,215,0,0.4)]"></i>
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- HOME VIEW -->
+            <main id="home-view" class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-6xl mx-auto w-full gap-8">
+                <div class="w-full text-center space-y-3 mb-4">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ffd13b]/10 to-[#a07d0f]/10 border border-[#ffd13b]/20 mb-2">
+                        <i class="fa-solid fa-trophy text-3xl text-[#ffd13b] drop-shadow-[0_0_10px_rgba(255,215,0,0.4)]"></i>
+                    </div>
+                    <h2 class="text-2xl md:text-4xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400">
+                        Welcome to the Arena
+                    </h2>
+                    <p class="text-xs md:text-sm text-gray-400 max-w-lg mx-auto">
+                        Design, run, simulate, and coordinate group stages and bracket knockouts seamlessly inside a gorgeous modular environment.
+                    </p>
                 </div>
-                <h2 class="text-2xl md:text-4xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400">
-                    Welcome to the Arena
-                </h2>
-                <p class="text-xs md:text-sm text-gray-400 max-w-lg mx-auto">
-                    Design, run, simulate, and coordinate group stages and bracket knockouts seamlessly inside a gorgeous modular environment.
-                </p>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-                <div onclick="showCreateView()" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-[#ffd13b]/40 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between min-h-[180px]">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="p-3 bg-[#ffd13b]/10 rounded-xl text-[#ffd13b] group-hover:scale-110 transition-transform"><i class="fa-solid fa-plus text-xl"></i></span>
-                            <span class="text-[10px] tracking-widest font-black text-gray-500 uppercase">Step 01</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+                    <div onclick="showCreateView()" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-[#ffd13b]/40 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between min-h-[180px]">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="p-3 bg-[#ffd13b]/10 rounded-xl text-[#ffd13b] group-hover:scale-110 transition-transform"><i class="fa-solid fa-plus text-xl"></i></span>
+                                <span class="text-[10px] tracking-widest font-black text-gray-500 uppercase">Step 01</span>
+                            </div>
+                            <h3 class="text-lg font-extrabold text-white group-hover:text-[#ffd13b] transition">Create Tournament</h3>
+                            <p class="text-xs text-gray-400">Setup dynamic group stages, custom qualifying quotas, or structured knockouts with automated seed distribution.</p>
                         </div>
-                        <h3 class="text-lg font-extrabold text-white group-hover:text-[#ffd13b] transition">Create Tournament</h3>
-                        <p class="text-xs text-gray-400">Setup dynamic group stages, custom qualifying quotas, or structured knockouts with automated seed distribution.</p>
-                    </div>
-                    <div class="flex items-center gap-1.5 text-xs text-[#ffd13b] font-bold mt-4">
-                        Build your tournament now <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
-                    </div>
-                </div>
-
-                <div onclick="scrollToTournaments()" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-blue-500/40 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between min-h-[180px]">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="p-3 bg-blue-500/10 rounded-xl text-blue-400 group-hover:scale-110 transition-transform"><i class="fa-solid fa-list-ul text-xl"></i></span>
-                            <span class="text-[10px] tracking-widest font-black text-gray-500 uppercase">Explore</span>
-                        </div>
-                        <h3 class="text-lg font-extrabold text-white group-hover:text-blue-400 transition">View Tournaments</h3>
-                        <p class="text-xs text-gray-400">Jump right back into any running tournament bracket or group match setups, and track active matches instantly.</p>
-                    </div>
-                    <div class="flex items-center gap-1.5 text-xs text-blue-400 font-bold mt-4">
-                        Jump to listings <i class="fa-solid fa-arrow-down transition-transform group-hover:translate-y-0.5"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tournament-listings" class="w-full max-w-4xl mt-6 space-y-4">
-                <h3 class="text-sm font-black tracking-widest uppercase text-gray-400 border-b border-white/5 pb-2">Active &amp; Saved Tournaments</h3>
-                <div id="tournament-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-            </div>
-        </main>
-
-        <!-- CREATE VIEW -->
-        <main id="create-view" class="hidden flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-3xl mx-auto w-full">
-            <div class="glass-card w-full p-6 md:p-8 rounded-2xl space-y-6">
-                <div class="flex items-center gap-3 border-b border-white/5 pb-4">
-                    <span class="w-10 h-10 rounded-lg bg-[#ffd13b]/10 flex items-center justify-center text-[#ffd13b] text-lg"><i class="fa-solid fa-gears"></i></span>
-                    <div>
-                        <h2 class="text-lg font-black text-white uppercase tracking-wider">Configure Tournament</h2>
-                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Adjust configurations &amp; draft contenders</p>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Tournament Name</label>
-                        <input id="form-name" type="text" placeholder="e.g. MONARCHS CL 3B" class="w-full px-4 py-3 rounded-lg input-dark font-medium text-sm" />
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Format Structure</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button id="tab-group" onclick="setFormFormat('group')" class="py-3 px-4 rounded-lg bg-gradient-to-r from-purple-600/20 to-purple-900/30 border border-purple-500/35 text-white text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-cubes"></i> Group Stage &amp; Bracket
-                            </button>
-                            <button id="tab-knockout" onclick="setFormFormat('knockout')" class="py-3 px-4 rounded-lg bg-white/5 border border-white/5 text-gray-400 text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-sitemap"></i> Direct Knockout Bracket
-                            </button>
+                        <div class="flex items-center gap-1.5 text-xs text-[#ffd13b] font-bold mt-4">
+                            Build your tournament now <i class="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1"></i>
                         </div>
                     </div>
 
-                    <div class="h-px bg-white/5 my-2"></div>
+                    <div onclick="scrollToTournaments()" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-blue-500/40 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between min-h-[180px]">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="p-3 bg-blue-500/10 rounded-xl text-blue-400 group-hover:scale-110 transition-transform"><i class="fa-solid fa-list-ul text-xl"></i></span>
+                                <span class="text-[10px] tracking-widest font-black text-gray-500 uppercase">Explore</span>
+                            </div>
+                            <h3 class="text-lg font-extrabold text-white group-hover:text-blue-400 transition">View Tournaments</h3>
+                            <p class="text-xs text-gray-400">Jump right back into any running tournament bracket or group match setups, and track active matches instantly.</p>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs text-blue-400 font-bold mt-4">
+                            Jump to listings <i class="fa-solid fa-arrow-down transition-transform group-hover:translate-y-0.5"></i>
+                        </div>
+                    </div>
+                </div>
 
-                    <div id="options-knockout" class="hidden space-y-4">
+                <div id="tournament-listings" class="w-full max-w-4xl mt-6 space-y-4">
+                    <h3 class="text-sm font-black tracking-widest uppercase text-gray-400 border-b border-white/5 pb-2">Active &amp; Saved Tournaments</h3>
+                    <div id="tournament-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                </div>
+            </main>
+
+            <!-- CREATE VIEW -->
+            <main id="create-view" class="hidden flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-3xl mx-auto w-full">
+                <div class="glass-card w-full p-6 md:p-8 rounded-2xl space-y-6">
+                    <div class="flex items-center gap-3 border-b border-white/5 pb-4">
+                        <span class="w-10 h-10 rounded-lg bg-[#ffd13b]/10 flex items-center justify-center text-[#ffd13b] text-lg"><i class="fa-solid fa-gears"></i></span>
                         <div>
-                            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Rounds / Participant Capacity</label>
-                            <select id="form-knockout-rounds" class="w-full px-4 py-3 rounded-lg input-dark font-semibold text-xs" onchange="adjustContendersPlaceholder()">
-                                <option value="32">Round of 32 (32 Players / 5 Rounds)</option>
-                                <option value="16" selected>Round of 16 (16 Players / 4 Rounds)</option>
-                                <option value="8">Quarter-finals (8 Players / 3 Rounds)</option>
-                                <option value="4">Semi-finals (4 Players / 2 Rounds)</option>
-                                <option value="2">Final (2 Players / 1 Round)</option>
-                            </select>
+                            <h2 class="text-lg font-black text-white uppercase tracking-wider">Configure Tournament</h2>
+                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Adjust configurations &amp; draft contenders</p>
                         </div>
                     </div>
 
-                    <div id="options-group" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Total Entrants</label>
-                                <select id="form-group-max" class="w-full px-4 py-3 rounded-lg input-dark font-bold text-xs" onchange="autoSuggestGroupStructure()">
-                                    <option value="20" selected>20 Entrants</option>
-                                    <option value="16">16 Entrants</option>
-                                    <option value="12">12 Entrants</option>
-                                    <option value="8">8 Entrants</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Contenders Per Group</label>
-                                <select id="form-group-size" class="w-full px-4 py-3 rounded-lg input-dark font-bold text-xs" onchange="autoSuggestGroupStructure()">
-                                    <option value="5" selected>5 Players</option>
-                                    <option value="4">4 Players</option>
-                                    <option value="3">3 Players</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Group Qualifiers</label>
-                                <select id="form-group-qualifiers" class="w-full px-4 py-3 rounded-lg input-dark font-bold text-xs">
-                                    <option value="4" selected>Top 4 Qualify</option>
-                                    <option value="2">Top 2 Qualify</option>
-                                    <option value="1">Top 1 Qualifies</option>
-                                </select>
-                            </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Tournament Name</label>
+                            <input id="form-name" type="text" placeholder="e.g. MONARCHS CL 3B" class="w-full px-4 py-3 rounded-lg input-dark font-medium text-sm" />
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Contender Distribution</label>
+                            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Format Structure</label>
                             <div class="grid grid-cols-2 gap-3">
-                                <button id="dist-random" onclick="setFormDist('random')" class="py-2.5 px-3 rounded-lg bg-gradient-to-r from-amber-600/20 to-amber-900/30 border border-amber-500/35 text-white text-xs font-black tracking-wider uppercase flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-shuffle"></i> Random Seed
+                                <button id="tab-group" onclick="setFormFormat('group')" class="py-3 px-4 rounded-lg bg-gradient-to-r from-purple-600/20 to-purple-900/30 border border-purple-500/35 text-white text-xs font-black tracking-wider uppercase transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-cubes"></i> Group Stage &amp; Bracket
                                 </button>
-                                <button id="dist-custom" onclick="setFormDist('custom')" class="py-2.5 px-3 rounded-lg bg-white/5 border border-white/5 text-gray-400 text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-list-ol"></i> Sequential Seed
+                                <button id="tab-knockout" onclick="setFormFormat('knockout')" class="py-3 px-4 rounded-lg bg-white/5 border border-white/5 text-gray-400 text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-sitemap"></i> Direct Knockout Bracket
                                 </button>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-white/5 my-2"></div>
+
+                        <div id="options-knockout" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Rounds / Participant Capacity</label>
+                                <select id="form-knockout-rounds" class="w-full px-4 py-3 rounded-lg input-dark font-semibold text-xs" onchange="adjustContendersPlaceholder()">
+                                    <option value="32">Round of 32 (32 Players / 5 Rounds)</option>
+                                    <option value="16" selected>Round of 16 (16 Players / 4 Rounds)</option>
+                                    <option value="8">Quarter-finals (8 Players / 3 Rounds)</option>
+                                    <option value="4">Semi-finals (4 Players / 2 Rounds)</option>
+                                    <option value="2">Final (2 Players / 1 Round)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="options-group" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Total Entrants</label>
+                                    <select id="form-group-max" class="w-full px-4 py-3 rounded-lg input-dark font-bold text-xs" onchange="autoSuggestGroupStructure()">
+                                        <option value="20" selected>20 Entrants</option>
+                                        <option value="16">16 Entrants</option>
+                                        <option value="12">12 Entrants</option>
+                                        <option value="8">8 Entrants</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Contenders Per Group</label>
+                                    <select id="form-group-size" class="w-full px-4 py-3 rounded-lg input-dark font-bold text-xs" onchange="autoSuggestGroupStructure()">
+                                        <option value="5" selected>5 Players</option>
+                                        <option value="4">4 Players</option>
+                                        <option value="3">3 Players</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Group Qualifiers</label>
+                                    <select id="form-group-qualifiers" class="w-full px-4 py-3 rounded-lg input-dark font-bold text-xs">
+                                        <option value="4" selected>Top 4 Qualify</option>
+                                        <option value="2">Top 2 Qualify</option>
+                                        <option value="1">Top 1 Qualifies</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Contender Distribution</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button id="dist-random" onclick="setFormDist('random')" class="py-2.5 px-3 rounded-lg bg-gradient-to-r from-amber-600/20 to-amber-900/30 border border-amber-500/35 text-white text-xs font-black tracking-wider uppercase flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-shuffle"></i> Random Seed
+                                    </button>
+                                    <button id="dist-custom" onclick="setFormDist('custom')" class="py-2.5 px-3 rounded-lg bg-white/5 border border-white/5 text-gray-400 text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-list-ol"></i> Sequential Seed
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider">Player Names (One Per Line)</label>
+                                <span id="contenders-counter" class="text-[10px] font-black text-[#ffd13b] uppercase">0 / 20 Contenders</span>
+                            </div>
+                            <textarea id="form-contenders" rows="6" placeholder="Enter contestant names, one on each line..." class="w-full p-4 rounded-lg input-dark font-semibold text-xs tracking-wide leading-relaxed" oninput="updateContendersCount()"></textarea>
+                            <div class="flex gap-2 mt-2 flex-wrap">
+                                <button onclick="autofillSampleTeams()" class="text-[10px] text-blue-400 hover:text-blue-300 font-bold tracking-wide uppercase flex items-center gap-1"><i class="fa-solid fa-keyboard"></i> Autofill Sample Teams</button>
+                                <span class="text-gray-600">|</span>
+                                <button onclick="clearContenderForm()" class="text-[10px] text-rose-400 hover:text-rose-300 font-bold tracking-wide uppercase flex items-center gap-1"><i class="fa-solid fa-eraser"></i> Clear Box</button>
                             </div>
                         </div>
                     </div>
 
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider">Player Names (One Per Line)</label>
-                            <span id="contenders-counter" class="text-[10px] font-black text-[#ffd13b] uppercase">0 / 20 Contenders</span>
-                        </div>
-                        <textarea id="form-contenders" rows="6" placeholder="Enter contestant names, one on each line..." class="w-full p-4 rounded-lg input-dark font-semibold text-xs tracking-wide leading-relaxed" oninput="updateContendersCount()"></textarea>
-                        <div class="flex gap-2 mt-2 flex-wrap">
-                            <button onclick="autofillSampleTeams()" class="text-[10px] text-blue-400 hover:text-blue-300 font-bold tracking-wide uppercase flex items-center gap-1"><i class="fa-solid fa-keyboard"></i> Autofill Sample Teams</button>
-                            <span class="text-gray-600">|</span>
-                            <button onclick="clearContenderForm()" class="text-[10px] text-rose-400 hover:text-rose-300 font-bold tracking-wide uppercase flex items-center gap-1"><i class="fa-solid fa-eraser"></i> Clear Box</button>
-                        </div>
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/5 flex-wrap">
+                        <button onclick="goHome()" class="px-6 py-3 rounded-xl secondary-btn text-xs font-bold uppercase tracking-wider">Cancel</button>
+                        <button onclick="handleCreateTournament()" class="px-8 py-3 rounded-xl gradient-btn text-xs font-black uppercase tracking-wider"><i class="fa-solid fa-plus mr-1"></i> Create Tournament</button>
                     </div>
                 </div>
+            </main>
 
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/5 flex-wrap">
-                    <button onclick="goHome()" class="px-6 py-3 rounded-xl secondary-btn text-xs font-bold uppercase tracking-wider">Cancel</button>
-                    <button onclick="handleCreateTournament()" class="px-8 py-3 rounded-xl gradient-btn text-xs font-black uppercase tracking-wider"><i class="fa-solid fa-plus mr-1"></i> Create Tournament</button>
+            <!-- WORKSPACE TABS -->
+
+            <!-- Groups -->
+            <main id="tab-view-groups" class="hidden flex-grow w-full max-w-6xl mx-auto p-4 md:p-8 flex flex-col gap-6">
+                <div class="text-center my-2">
+                    <h2 id="groups-title" class="text-sm sm:text-lg font-black tracking-[0.2em] text-[#ffd13b] leading-tight uppercase">MONARCHS CL 3B GROUP STAGE TOURNAMENT</h2>
                 </div>
-            </div>
-        </main>
+                <div id="groups-standings-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+            </main>
 
-        <!-- WORKSPACE TABS -->
-
-        <!-- Groups -->
-        <main id="tab-view-groups" class="hidden flex-grow w-full max-w-6xl mx-auto p-4 md:p-8 flex flex-col gap-6">
-            <div class="text-center my-2">
-                <h2 id="groups-title" class="text-sm sm:text-lg font-black tracking-[0.2em] text-[#ffd13b] leading-tight uppercase">MONARCHS CL 3B GROUP STAGE TOURNAMENT</h2>
-            </div>
-            <div id="groups-standings-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
-        </main>
-
-        <!-- Fixtures -->
-        <main id="tab-view-fixtures" class="hidden flex-grow w-full max-w-6xl mx-auto p-4 md:p-8 flex flex-col gap-6">
-            <div class="text-center my-2">
-                <h2 id="fixtures-title" class="text-sm sm:text-lg font-black tracking-[0.2em] text-[#ffd13b] leading-tight uppercase">MONARCHS CL 3B TOURNAMENT FIXTURES</h2>
-            </div>
-            <div id="fixtures-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
-        </main>
-
-        <!-- Knockout -->
-        <main id="tab-view-knockout" class="hidden flex-grow w-full overflow-x-auto overflow-y-auto flex items-start justify-center p-4 md:p-8 bracket-wrapper relative">
-
-            <div id="knockout-guard-overlay" class="absolute inset-0 z-40 bg-[#0d0f1a]/95 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
-                <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
-                    <i class="fa-solid fa-lock"></i>
+            <!-- Fixtures -->
+            <main id="tab-view-fixtures" class="hidden flex-grow w-full max-w-6xl mx-auto p-4 md:p-8 flex flex-col gap-6">
+                <div class="text-center my-2">
+                    <h2 id="fixtures-title" class="text-sm sm:text-lg font-black tracking-[0.2em] text-[#ffd13b] leading-tight uppercase">MONARCHS CL 3B TOURNAMENT FIXTURES</h2>
                 </div>
-                <h3 class="text-lg font-black uppercase text-white tracking-wider">Knockout Stage Locked</h3>
-                <p class="text-xs text-gray-400 max-w-md">Complete Group Matches and click "Generate Knockout Phase" to seed the top qualifying contenders into the final elimination bracket.</p>
-                <button onclick="advanceGroupQualifiers()" class="gradient-btn px-6 py-2.5 rounded-full text-xs font-black tracking-wider uppercase flex items-center gap-1.5"><i class="fa-solid fa-forward-fast"></i> Seed Knockout Stage Now</button>
-            </div>
+                <div id="fixtures-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
+            </main>
 
-            <div id="bracket-container" class="relative w-full max-w-[2400px]">
-                <svg id="connector-svg"></svg>
-                <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full h-[2400px] relative gap-16">
-                    <!-- Dynamic Bracket Columns -->
+            <!-- Knockout -->
+            <main id="tab-view-knockout" class="hidden flex-grow w-full overflow-x-auto overflow-y-auto flex items-start justify-center p-4 md:p-8 bracket-wrapper relative">
+
+                <div id="knockout-guard-overlay" class="absolute inset-0 z-40 bg-[#0d0f1a]/95 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
+                    <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="text-lg font-black uppercase text-white tracking-wider">Knockout Stage Locked</h3>
+                    <p class="text-xs text-gray-400 max-w-md">Complete Group Matches and click "Generate Knockout Phase" to seed the top qualifying contenders into the final elimination bracket.</p>
+                    <button onclick="advanceGroupQualifiers()" class="gradient-btn px-6 py-2.5 rounded-full text-xs font-black tracking-wider uppercase flex items-center gap-1.5"><i class="fa-solid fa-forward-fast"></i> Seed Knockout Stage Now</button>
                 </div>
-            </div>
-        </main>
 
-    </div>
+                <div id="bracket-container" class="relative w-full max-w-[2400px]">
+                    <svg id="connector-svg"></svg>
+                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full h-[2400px] relative gap-16">
+                        <!-- Dynamic Bracket Columns -->
+                    </div>
+                </div>
+            </main>
+
+        </div> <!-- end main-content -->
+
+    </div> <!-- end app -->
 
     <!-- EDIT PLAYERS MODAL -->
     <div id="edit-players-modal" class="hidden fixed inset-0 z-[100] bg-[#04060f]/90 backdrop-blur-md flex items-center justify-center p-4">
@@ -777,20 +882,21 @@
             const btnFixtures = document.getElementById('tab-fixtures');
             const btnKnockout = document.getElementById('tab-knockout');
             [btnGroups, btnFixtures, btnKnockout].forEach(btn => {
-                btn.className = "pill-btn px-5 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all uppercase text-gray-400 hover:text-white";
+                btn.className = "pill-btn";
+                btn.classList.remove('active');
             });
 
             if (tab === 'groups') {
                 document.getElementById('tab-view-groups').classList.remove('hidden');
-                btnGroups.className = "pill-btn px-5 py-1.5 rounded-full text-xs font-black tracking-wider transition-all uppercase bg-[#ffd13b] text-[#0d0f1a] shadow-md";
+                btnGroups.classList.add('active');
                 renderActiveGroupStandings();
             } else if (tab === 'fixtures') {
                 document.getElementById('tab-view-fixtures').classList.remove('hidden');
-                btnFixtures.className = "pill-btn px-5 py-1.5 rounded-full text-xs font-black tracking-wider transition-all uppercase bg-[#ffd13b] text-[#0d0f1a] shadow-md";
+                btnFixtures.classList.add('active');
                 renderActiveFixturesGrid();
             } else if (tab === 'knockout') {
                 document.getElementById('tab-view-knockout').classList.remove('hidden');
-                btnKnockout.className = "pill-btn px-5 py-1.5 rounded-full text-xs font-black tracking-wider transition-all uppercase bg-[#ffd13b] text-[#0d0f1a] shadow-md";
+                btnKnockout.classList.add('active');
                 const guard = document.getElementById('knockout-guard-overlay');
                 if (t.rounds && t.rounds.length > 0) {
                     guard.classList.add('hidden');
@@ -1170,14 +1276,25 @@
             document.getElementById('fixtures-title').innerText = `${t.name} TOURNAMENT FIXTURES`;
             document.getElementById('view-actions').classList.remove('hidden');
 
+            // Determine if we need to show the navigation tabs
+            // For direct knockout, we hide the tabs; for group stage, we show them
             if (t.format === 'knockout') {
+                // Direct knockout: hide the nav tabs entirely
                 document.getElementById('active-nav-tabs').classList.add('hidden');
+                // Show only knockout view
                 hideWorkspaceViews();
                 document.getElementById('tab-view-knockout').classList.remove('hidden');
                 document.getElementById('knockout-guard-overlay').classList.add('hidden');
                 renderActiveBracket();
                 updateConnectors();
+                // Set active tab styling (though hidden, we keep it for consistency)
+                const btnKnockout = document.getElementById('tab-knockout');
+                [document.getElementById('tab-groups'), document.getElementById('tab-fixtures'), btnKnockout].forEach(b => b
+                    .classList.remove('active'));
+                btnKnockout.classList.add('active');
+                currentWorkspaceTab = 'knockout';
             } else {
+                // Group stage: show the nav tabs and default to Groups view
                 document.getElementById('active-nav-tabs').classList.remove('hidden');
                 switchActiveTab('groups');
             }
