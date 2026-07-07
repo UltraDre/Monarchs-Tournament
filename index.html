@@ -17,7 +17,8 @@
             padding: 0;
         }
 
-        html, body {
+        html,
+        body {
             width: 100%;
             min-height: 100vh;
         }
@@ -76,7 +77,6 @@
             stroke-linejoin: round;
         }
 
-        /* Thinner connector lines */
         #connector-svg path.winner-path {
             filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.35));
             stroke: #ffd13b;
@@ -421,7 +421,6 @@
             margin-right: auto;
         }
 
-        /* No scroll bars - everything directly on page */
         .bracket-wrapper {
             overflow: visible !important;
             max-height: none !important;
@@ -494,7 +493,6 @@
             min-width: 140px;
         }
 
-        /* Remove scroll from knockout tab view */
         #tab-view-knockout {
             overflow: visible !important;
             display: flex;
@@ -505,7 +503,6 @@
             min-height: 100vh;
         }
 
-        /* Sticky controls - part of page flow, good for screenshots */
         .floating-controls {
             position: sticky;
             top: 0;
@@ -556,7 +553,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             transition: all 0.2s;
             cursor: pointer;
             background: transparent;
@@ -565,7 +562,7 @@
         .floating-controls .pill-btn.active {
             background: #ffd13b;
             color: #0d0f1a;
-            box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
         }
         .floating-controls .pill-btn:hover:not(.active) {
             color: #fff;
@@ -577,7 +574,7 @@
             background: rgba(20, 24, 43, 0.6);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #c8d0e0;
             display: flex;
             align-items: center;
@@ -587,27 +584,27 @@
             font-size: 16px;
         }
         .floating-controls .icon-btn:hover {
-            background: rgba(255,215,0,0.15);
+            background: rgba(255, 215, 0, 0.15);
             color: #ffd13b;
-            border-color: rgba(255,215,0,0.3);
+            border-color: rgba(255, 215, 0, 0.3);
         }
         .floating-controls .icon-btn.green {
-            background: rgba(34,197,94,0.15);
-            border-color: rgba(34,197,94,0.2);
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.2);
             color: #4ade80;
         }
         .floating-controls .icon-btn.green:hover {
-            background: rgba(34,197,94,0.25);
-            border-color: rgba(34,197,94,0.4);
+            background: rgba(34, 197, 94, 0.25);
+            border-color: rgba(34, 197, 94, 0.4);
         }
         .floating-controls .icon-btn.blue {
-            background: rgba(59,130,246,0.15);
-            border-color: rgba(59,130,246,0.2);
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.2);
             color: #60a5fa;
         }
         .floating-controls .icon-btn.blue:hover {
-            background: rgba(59,130,246,0.25);
-            border-color: rgba(59,130,246,0.4);
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.4);
         }
 
         .main-content {
@@ -618,7 +615,6 @@
             min-height: 100vh;
         }
 
-        /* hide tabs when not needed */
         #active-nav-tabs .pill-nav {
             display: flex;
         }
@@ -626,8 +622,8 @@
             display: none;
         }
 
-        /* Ensure home and create views work properly */
-        #home-view, #create-view {
+        #home-view,
+        #create-view {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -635,16 +631,140 @@
             justify-content: center;
             min-height: 80vh;
         }
-        #home-view.hidden, #create-view.hidden {
+        #home-view.hidden,
+        #create-view.hidden {
             display: none !important;
         }
-        #tab-view-groups.hidden, #tab-view-fixtures.hidden, #tab-view-knockout.hidden {
+        #tab-view-groups.hidden,
+        #tab-view-fixtures.hidden,
+        #tab-view-knockout.hidden {
             display: none !important;
         }
-        #tab-view-groups, #tab-view-fixtures, #tab-view-knockout {
+        #tab-view-groups,
+        #tab-view-fixtures,
+        #tab-view-knockout {
             flex: 1;
             display: flex;
             flex-direction: column;
+        }
+
+        /* ── Sort dropdown ── */
+        .sort-dropdown-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 9999px;
+            padding: 4px 14px 4px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #9aa3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .sort-dropdown-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+        .sort-dropdown-btn .sort-label {
+            max-width: 90px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sort-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            min-width: 170px;
+            background: rgba(20, 24, 43, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 215, 0, 0.08);
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            z-index: 30;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sort-menu.open {
+            display: flex;
+        }
+        .sort-menu .sort-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #c8d0e0;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .sort-menu .sort-option:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+        .sort-menu .sort-option.active {
+            color: #ffd13b;
+            background: rgba(255, 215, 0, 0.08);
+        }
+        .sort-menu .sort-option i {
+            width: 16px;
+            font-size: 12px;
+            color: inherit;
+        }
+        .sort-menu .sort-option .check {
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: #ffd13b;
+            font-size: 12px;
+        }
+        .sort-menu .sort-option.active .check {
+            opacity: 1;
+        }
+        .sort-menu .sort-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 4px 8px;
+        }
+        .sort-wrapper {
+            position: relative;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .tournament-heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+        .tournament-heading-row h3 {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            margin: 0;
         }
     </style>
 </head>
@@ -653,9 +773,8 @@
     <!-- MAIN APP -->
     <div id="app" class="flex flex-col min-h-screen">
 
-        <!-- STICKY CONTROLS (part of page flow) -->
+        <!-- STICKY CONTROLS -->
         <div class="floating-controls">
-            <!-- Left: Back + Home -->
             <div class="left-buttons">
                 <button onclick="goHome()" class="icon-btn" title="Back to Dashboard">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -665,7 +784,6 @@
                 </button>
             </div>
 
-            <!-- Center: Navigation Tabs (Groups, Fixtures, Knockout) -->
             <div id="active-nav-tabs" class="center-tabs hidden">
                 <div class="pill-nav">
                     <button id="tab-groups" onclick="switchActiveTab('groups')" class="pill-btn">Groups</button>
@@ -674,7 +792,6 @@
                 </div>
             </div>
 
-            <!-- Right: Backup + Restore -->
             <div id="view-actions" class="right-buttons hidden">
                 <button onclick="downloadBackup()" class="icon-btn green" title="Download Backup">
                     <i class="fa-solid fa-download"></i>
@@ -734,7 +851,35 @@
                 </div>
 
                 <div id="tournament-listings" class="w-full max-w-4xl mt-6 space-y-4">
-                    <h3 class="text-sm font-black tracking-widest uppercase text-gray-400 border-b border-white/5 pb-2">Active &amp; Saved Tournaments</h3>
+                    <div class="tournament-heading-row">
+                        <h3>Active &amp; Saved Tournaments</h3>
+                        <div class="sort-wrapper">
+                            <button class="sort-dropdown-btn" onclick="toggleSortMenu()" id="sortDropdownBtn">
+                                <i class="fa-solid fa-arrow-up-wide-short"></i>
+                                <span class="sort-label" id="sortLabel">Newest</span>
+                                <i class="fa-solid fa-chevron-down text-[8px] opacity-50"></i>
+                            </button>
+                            <div class="sort-menu" id="sortMenu">
+                                <button class="sort-option" data-sort="date-desc" onclick="setSort('date-desc')">
+                                    <i class="fa-solid fa-clock"></i> Newest First
+                                    <span class="check"><i class="fa-solid fa-check"></i></span>
+                                </button>
+                                <button class="sort-option" data-sort="date-asc" onclick="setSort('date-asc')">
+                                    <i class="fa-solid fa-clock-rotate-left"></i> Oldest First
+                                    <span class="check"><i class="fa-solid fa-check"></i></span>
+                                </button>
+                                <div class="sort-divider"></div>
+                                <button class="sort-option" data-sort="name-asc" onclick="setSort('name-asc')">
+                                    <i class="fa-solid fa-arrow-down-a-z"></i> Name A → Z
+                                    <span class="check"><i class="fa-solid fa-check"></i></span>
+                                </button>
+                                <button class="sort-option" data-sort="name-desc" onclick="setSort('name-desc')">
+                                    <i class="fa-solid fa-arrow-up-a-z"></i> Name Z → A
+                                    <span class="check"><i class="fa-solid fa-check"></i></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div id="tournament-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
             </main>
@@ -781,7 +926,6 @@
                                     <option value="2">Final (2 Players / 1 Round)</option>
                                 </select>
                             </div>
-                            <!-- Distribution options for Knockout -->
                             <div>
                                 <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Contender Distribution</label>
                                 <div class="grid grid-cols-2 gap-3">
@@ -858,9 +1002,7 @@
                 </div>
             </main>
 
-            <!-- WORKSPACE TABS -->
-
-            <!-- Groups -->
+            <!-- GROUPS -->
             <main id="tab-view-groups" class="hidden flex-grow w-full max-w-6xl mx-auto p-4 md:p-8 flex flex-col gap-6">
                 <div class="text-center my-2">
                     <h2 id="groups-title" class="text-sm sm:text-lg font-black tracking-[0.2em] text-[#ffd13b] leading-tight uppercase">MONARCHS CL 3B GROUP STAGE TOURNAMENT</h2>
@@ -868,7 +1010,7 @@
                 <div id="groups-standings-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
             </main>
 
-            <!-- Fixtures -->
+            <!-- FIXTURES -->
             <main id="tab-view-fixtures" class="hidden flex-grow w-full max-w-6xl mx-auto p-4 md:p-8 flex flex-col gap-6">
                 <div class="text-center my-2">
                     <h2 id="fixtures-title" class="text-sm sm:text-lg font-black tracking-[0.2em] text-[#ffd13b] leading-tight uppercase">MONARCHS CL 3B TOURNAMENT FIXTURES</h2>
@@ -876,9 +1018,8 @@
                 <div id="fixtures-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
             </main>
 
-            <!-- Knockout - No scroll bars, everything directly on page -->
+            <!-- KNOCKOUT -->
             <main id="tab-view-knockout" class="hidden flex-grow w-full flex items-start justify-center bracket-wrapper bracket-full-page">
-
                 <div id="knockout-guard-overlay" class="absolute inset-0 z-40 bg-[#0d0f1a]/95 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
                     <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
                         <i class="fa-solid fa-lock"></i>
@@ -887,18 +1028,14 @@
                     <p class="text-xs text-gray-400 max-w-md">Complete Group Matches and click "Generate Knockout Phase" to seed the top qualifying contenders into the final elimination bracket.</p>
                     <button onclick="advanceGroupQualifiers()" class="gradient-btn px-6 py-2.5 rounded-full text-xs font-black tracking-wider uppercase flex items-center gap-1.5"><i class="fa-solid fa-forward-fast"></i> Seed Knockout Stage Now</button>
                 </div>
-
                 <div id="bracket-container" class="relative w-full max-w-full">
                     <svg id="connector-svg"></svg>
-                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full min-h-[800px] relative gap-2">
-                        <!-- Dynamic Bracket Columns -->
-                    </div>
+                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full min-h-[800px] relative gap-2"></div>
                 </div>
             </main>
 
-        </div> <!-- end main-content -->
-
-    </div> <!-- end app -->
+        </div>
+    </div>
 
     <!-- EDIT PLAYERS MODAL -->
     <div id="edit-players-modal" class="hidden fixed inset-0 z-[100] bg-[#04060f]/90 backdrop-blur-md flex items-center justify-center p-4">
@@ -934,6 +1071,10 @@
         let currentWorkspaceTab = 'groups';
         let editingTournamentId = null;
 
+        // ── SORT STATE ──
+        let currentSort = 'date-desc';
+        let sortMenuOpen = false;
+
         const SAMPLE_CROWN_TEAMS = [
             "Bigimachine", "Desmond", "Elona", "Mattys", "Abusiwan",
             "Bigagold", "Bright", "Samuel", "Chris_Bicho", "Praise",
@@ -955,10 +1096,59 @@
             renderTournamentListings();
         }
 
-        // Auto‑save on page unload
         window.addEventListener('beforeunload', function() {
             saveTournamentsToStorage();
         });
+
+        // ──────────────────────────────────────────────────────────────
+        //  SORT LOGIC
+        // ──────────────────────────────────────────────────────────────
+        function toggleSortMenu() {
+            sortMenuOpen = !sortMenuOpen;
+            document.getElementById('sortMenu').classList.toggle('open', sortMenuOpen);
+        }
+
+        function setSort(sortKey) {
+            currentSort = sortKey;
+            sortMenuOpen = false;
+            document.getElementById('sortMenu').classList.remove('open');
+
+            // update label
+            const labels = {
+                'date-desc': 'Newest',
+                'date-asc': 'Oldest',
+                'name-asc': 'A → Z',
+                'name-desc': 'Z → A'
+            };
+            document.getElementById('sortLabel').textContent = labels[sortKey] || 'Sort';
+
+            // update active state
+            document.querySelectorAll('.sort-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.sort === sortKey);
+            });
+
+            renderTournamentListings();
+        }
+
+        function getSortedTournaments() {
+            const arr = [...tournaments];
+            switch (currentSort) {
+                case 'name-asc':
+                    arr.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'name-desc':
+                    arr.sort((a, b) => b.name.localeCompare(a.name));
+                    break;
+                case 'date-asc':
+                    arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+                case 'date-desc':
+                default:
+                    arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+            }
+            return arr;
+        }
 
         // ──────────────────────────────────────────────────────────────
         //  NAVIGATION
@@ -1031,9 +1221,6 @@
             }
         }
 
-        // ──────────────────────────────────────────────────────────────
-        //  REFRESH CURRENT VIEW (for real‑time updates)
-        // ──────────────────────────────────────────────────────────────
         function refreshCurrentView() {
             if (!activeTournamentId) return;
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1049,12 +1236,15 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  TOURNAMENT LISTINGS
+        //  TOURNAMENT LISTINGS (with sort)
         // ──────────────────────────────────────────────────────────────
         function renderTournamentListings() {
             const grid = document.getElementById('tournament-cards-grid');
             grid.innerHTML = '';
-            if (tournaments.length === 0) {
+
+            const sorted = getSortedTournaments();
+
+            if (sorted.length === 0) {
                 grid.innerHTML = `
                         <div class="col-span-1 md:col-span-2 glass-card p-8 rounded-xl text-center space-y-2">
                             <p class="text-sm text-gray-400 font-medium">No tournament brackets generated yet.</p>
@@ -1063,12 +1253,15 @@
                     `;
                 return;
             }
-            tournaments.forEach(t => {
+
+            sorted.forEach(t => {
                 const card = document.createElement('div');
-                card.className = "glass-card p-5 rounded-xl hover:border-[#ffd13b]/30 hover:-translate-y-0.5 transition-all flex flex-col justify-between";
+                card.className =
+                    "glass-card p-5 rounded-xl hover:border-[#ffd13b]/30 hover:-translate-y-0.5 transition-all flex flex-col justify-between";
                 let statsText = t.format === 'knockout' ?
                     `${t.entrants.length} Entrants · Direct Elimination Bracket` :
                     `${t.entrants.length} Entrants · ${t.groups.length} Groups · Group & Knockout`;
+                const dateStr = t.createdAt ? new Date(t.createdAt).toLocaleDateString() : '';
                 card.innerHTML = `
                         <div class="space-y-1.5 mb-4">
                             <div class="flex items-center justify-between">
@@ -1082,6 +1275,7 @@
                             </div>
                             <h4 class="text-sm font-black text-white uppercase tracking-wide truncate max-w-[250px]">${t.name}</h4>
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${statsText}</p>
+                            ${dateStr ? `<p class="text-[9px] text-gray-500 font-medium">${dateStr}</p>` : ''}
                         </div>
                         <button onclick="launchTournament('${t.id}')" class="w-full py-2.5 rounded-lg secondary-btn text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-circle-play text-xs text-[#ffd13b]"></i> Launch Match
@@ -1252,7 +1446,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  BALANCED ROUND-ROBIN FIXTURE GENERATOR (equal home/away)
+        //  BALANCED ROUND-ROBIN FIXTURE GENERATOR
         // ──────────────────────────────────────────────────────────────
         function generateRoundRobinFixtures(teams) {
             if (teams.length < 2) return [];
@@ -1612,7 +1806,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  SCORE CHANGE HANDLER (for knockout)
+        //  SCORE CHANGE HANDLER
         // ──────────────────────────────────────────────────────────────
         function handleScoreChange(roundIdx, slotIdx, field, val) {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1748,7 +1942,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  CONNECTOR LINES - THINNER
+        //  CONNECTOR LINES
         // ──────────────────────────────────────────────────────────────
         function updateConnectors() {
             const svg = document.getElementById('connector-svg');
@@ -1810,7 +2004,6 @@
 
                     const mergeX = (Math.max(xA, xB) + xT) / 2;
 
-                    // Thinner connector lines
                     const winColor = '#ffd13b';
                     const normColor = 'rgba(255,255,255,0.35)';
                     const winW = 3;
@@ -1967,7 +2160,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  BUILD INITIAL KNOCKOUT ROUNDS (for direct knockout)
+        //  BUILD INITIAL KNOCKOUT ROUNDS (direct)
         // ──────────────────────────────────────────────────────────────
         function buildInitialKnockoutRounds(contenders) {
             const count = contenders.length;
@@ -1991,7 +2184,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  DOWNLOAD / UPLOAD BACKUP
+        //  BACKUP
         // ──────────────────────────────────────────────────────────────
         function downloadBackup() {
             const data = JSON.stringify(tournaments, null, 2);
@@ -2118,6 +2311,20 @@
             loadTournamentsFromStorage();
             goHome();
             updateDistButtons();
+            // set default sort active state
+            document.querySelectorAll('.sort-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.sort === currentSort);
+            });
+            document.getElementById('sortLabel').textContent = 'Newest';
+        });
+
+        // Close sort menu on outside click
+        document.addEventListener('click', function(e) {
+            const wrapper = document.querySelector('.sort-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                sortMenuOpen = false;
+                document.getElementById('sortMenu').classList.remove('open');
+            }
         });
     </script>
 </body>
