@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1200" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Monarchs Tournament Engine</title>
     <script src="https://cdn.tailwindcss.com">
     </script>
@@ -34,7 +34,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 0 20px;
+            padding: 0 12px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         ::-webkit-scrollbar {
@@ -510,14 +511,18 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 20px;
-            background: rgba(13, 15, 26, 0.85);
+            padding: 10px 14px;
+            background: rgba(13, 15, 26, 0.88);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(255, 215, 0, 0.1);
             pointer-events: none;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
+            border-radius: 0 0 12px 12px;
+            margin: 0 -12px;
+            padding-left: 16px;
+            padding-right: 16px;
         }
         .floating-controls>* {
             pointer-events: auto;
@@ -526,13 +531,13 @@
         .floating-controls .right-buttons {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .floating-controls .center-tabs {
             display: flex;
             justify-content: center;
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
         }
         .floating-controls .pill-nav {
             background: rgba(20, 24, 43, 0.7);
@@ -540,16 +545,16 @@
             -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 9999px;
-            padding: 4px;
+            padding: 3px;
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-wrap: wrap;
             justify-content: center;
         }
         .floating-controls .pill-btn {
-            padding: 6px 16px;
+            padding: 5px 12px;
             border-radius: 9999px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -558,6 +563,7 @@
             cursor: pointer;
             background: transparent;
             border: none;
+            white-space: nowrap;
         }
         .floating-controls .pill-btn.active {
             background: #ffd13b;
@@ -568,8 +574,8 @@
             color: #fff;
         }
         .floating-controls .icon-btn {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: rgba(20, 24, 43, 0.6);
             backdrop-filter: blur(4px);
@@ -581,7 +587,7 @@
             justify-content: center;
             transition: all 0.2s;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
         }
         .floating-controls .icon-btn:hover {
             background: rgba(255, 215, 0, 0.15);
@@ -606,9 +612,18 @@
             background: rgba(59, 130, 246, 0.25);
             border-color: rgba(59, 130, 246, 0.4);
         }
+        .floating-controls .icon-btn.amber {
+            background: rgba(255, 215, 0, 0.12);
+            border-color: rgba(255, 215, 0, 0.2);
+            color: #ffd13b;
+        }
+        .floating-controls .icon-btn.amber:hover {
+            background: rgba(255, 215, 0, 0.22);
+            border-color: rgba(255, 215, 0, 0.35);
+        }
 
         .main-content {
-            padding-top: 0;
+            padding-top: 4px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -648,7 +663,6 @@
             flex-direction: column;
         }
 
-        /* ── Sort dropdown ── */
         .sort-dropdown-btn {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -766,6 +780,199 @@
             color: rgba(255, 255, 255, 0.35);
             margin: 0;
         }
+
+        /* score-input no-reflow */
+        .score-input,
+        .score-box {
+            touch-action: manipulation;
+        }
+
+        /* mobile-friendly tweaks */
+        @media (max-width: 640px) {
+            .floating-controls {
+                padding: 8px 10px;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .floating-controls .center-tabs {
+                min-width: 140px;
+                order: 3;
+                flex-basis: 100%;
+                justify-content: center;
+            }
+            .floating-controls .pill-btn {
+                font-size: 9px;
+                padding: 4px 10px;
+            }
+            .floating-controls .icon-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+            .bracket-full-page .bracket-col {
+                min-width: 120px;
+                padding: 0 4px;
+            }
+            .bracket-full-page .name-input {
+                width: 80px;
+                height: 28px;
+                font-size: 8px;
+                padding: 0 8px;
+            }
+            .bracket-full-page .score-input {
+                width: 24px;
+                height: 28px;
+                font-size: 10px;
+            }
+            .bracket-full-page .champion-slot .name-input {
+                width: 100px;
+                height: 30px;
+                font-size: 9px;
+            }
+            .bracket-full-page .trophy-svg {
+                width: 24px;
+                height: 24px;
+            }
+            .bracket-full-page .slot-pair-second {
+                margin-bottom: 14px;
+            }
+            #fixtures-grid .fixture-row .team-box {
+                font-size: 9px;
+                height: 28px;
+                padding: 0 8px;
+            }
+            #fixtures-grid .fixture-row .score-box {
+                width: 26px;
+                height: 28px;
+                font-size: 12px;
+            }
+            #fixtures-grid .fixture-row .vs-badge {
+                height: 28px;
+                font-size: 7px;
+                padding: 0 6px;
+            }
+            .name-input {
+                width: 100px;
+                height: 30px;
+                font-size: 9px;
+                padding: 0 10px;
+            }
+            .score-input {
+                width: 28px;
+                height: 30px;
+                font-size: 12px;
+            }
+            .champion-slot .name-input {
+                width: 120px !important;
+                height: 34px !important;
+                font-size: 10px !important;
+            }
+            .trophy-svg {
+                width: 30px !important;
+                height: 30px !important;
+            }
+            #groups-standings-grid td,
+            #groups-standings-grid th {
+                padding: 4px 3px !important;
+                font-size: 9px !important;
+            }
+            #groups-standings-grid .glass-card {
+                padding: 10px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .bracket-full-page .bracket-col {
+                min-width: 90px;
+                padding: 0 2px;
+            }
+            .bracket-full-page .name-input {
+                width: 60px;
+                height: 24px;
+                font-size: 7px;
+                padding: 0 4px;
+            }
+            .bracket-full-page .score-input {
+                width: 20px;
+                height: 24px;
+                font-size: 9px;
+            }
+            .bracket-full-page .champion-slot .name-input {
+                width: 80px !important;
+                height: 26px !important;
+                font-size: 8px !important;
+            }
+            .bracket-full-page .trophy-svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+            .bracket-full-page .slot-pair-second {
+                margin-bottom: 10px;
+            }
+            .bracket-full-page .bracket-col .col-title {
+                font-size: 8px;
+                margin-bottom: 10px;
+            }
+            .bracket-col {
+                padding: 0 4px !important;
+            }
+            .slot {
+                padding: 1px 0 !important;
+            }
+            .name-input {
+                width: 70px !important;
+                height: 24px !important;
+                font-size: 7px !important;
+                padding: 0 6px !important;
+            }
+            .score-input {
+                width: 22px !important;
+                height: 24px !important;
+                font-size: 9px !important;
+            }
+            .champion-slot .name-input {
+                width: 90px !important;
+                height: 28px !important;
+                font-size: 8px !important;
+            }
+            .trophy-svg {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            #fixtures-grid .fixture-row .team-box {
+                font-size: 8px;
+                height: 24px;
+                padding: 0 4px;
+            }
+            #fixtures-grid .fixture-row .score-box {
+                width: 22px;
+                height: 24px;
+                font-size: 10px;
+            }
+            #fixtures-grid .fixture-row .vs-badge {
+                height: 24px;
+                font-size: 6px;
+                padding: 0 4px;
+            }
+            #fixtures-grid .fixture-row {
+                gap: 2px;
+                max-width: 100%;
+            }
+            #groups-standings-grid td,
+            #groups-standings-grid th {
+                padding: 2px 2px !important;
+                font-size: 7px !important;
+            }
+            .floating-controls .pill-btn {
+                font-size: 8px;
+                padding: 3px 8px;
+            }
+            .floating-controls .icon-btn {
+                width: 26px;
+                height: 26px;
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -776,11 +983,11 @@
         <!-- STICKY CONTROLS -->
         <div class="floating-controls">
             <div class="left-buttons">
-                <button onclick="goHome()" class="icon-btn" title="Back to Dashboard">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
                 <button onclick="goHome()" class="icon-btn" title="Dashboard">
                     <i class="fa-solid fa-house"></i>
+                </button>
+                <button onclick="refreshCurrentView()" class="icon-btn amber" title="Refresh View">
+                    <i class="fa-solid fa-rotate"></i>
                 </button>
             </div>
 
@@ -1070,6 +1277,8 @@
         let currentFormDist = 'random';
         let currentWorkspaceTab = 'groups';
         let editingTournamentId = null;
+        let _skipRender = false;
+        let _pendingStandingsUpdate = null;
 
         // ── SORT STATE ──
         let currentSort = 'date-desc';
@@ -1113,7 +1322,6 @@
             sortMenuOpen = false;
             document.getElementById('sortMenu').classList.remove('open');
 
-            // update label
             const labels = {
                 'date-desc': 'Newest',
                 'date-asc': 'Oldest',
@@ -1122,7 +1330,6 @@
             };
             document.getElementById('sortLabel').textContent = labels[sortKey] || 'Sort';
 
-            // update active state
             document.querySelectorAll('.sort-option').forEach(el => {
                 el.classList.toggle('active', el.dataset.sort === sortKey);
             });
@@ -1709,7 +1916,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: FIXTURES
+        //  RENDER: FIXTURES (with no-reflow score updates)
         // ──────────────────────────────────────────────────────────────
         function renderActiveFixturesGrid() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1721,14 +1928,19 @@
                 container.className = "flex flex-col gap-4";
                 let html = '';
                 group.matches.forEach(m => {
+                    // Ensure scores are strings
+                    const hs = (m.homeScore ?? '').toString();
+                    const as = (m.awayScore ?? '').toString();
                     html += `
-                            <div class="fixture-row">
+                            <div class="fixture-row" data-match-id="${m.id}">
                                 <div class="team-box" title="${m.home}">${m.home}</div>
-                                <input type="text" inputmode="numeric" value="${m.homeScore??''}" placeholder="-" min="0" max="99"
-                                       class="score-box" onchange="updateGroupMatchValue('${m.id}','homeScore',this.value)" />
+                                <input type="text" inputmode="numeric" value="${hs}" placeholder="-" 
+                                       class="score-box" data-match="${m.id}" data-side="home" 
+                                       autocomplete="off" />
                                 <div class="vs-badge">VS</div>
-                                <input type="text" inputmode="numeric" value="${m.awayScore??''}" placeholder="-" min="0" max="99"
-                                       class="score-box" onchange="updateGroupMatchValue('${m.id}','awayScore',this.value)" />
+                                <input type="text" inputmode="numeric" value="${as}" placeholder="-" 
+                                       class="score-box" data-match="${m.id}" data-side="away" 
+                                       autocomplete="off" />
                                 <div class="team-box away" title="${m.away}">${m.away}</div>
                             </div>
                         `;
@@ -1738,19 +1950,73 @@
                         <div class="flex flex-col gap-2">${html}</div>
                     `;
                 grid.appendChild(container);
+
+                // attach event listeners directly to the inputs
+                container.querySelectorAll('.score-box').forEach(inp => {
+                    inp.addEventListener('change', function(e) {
+                        const matchId = this.dataset.match;
+                        const side = this.dataset.side;
+                        const val = this.value;
+                        updateGroupMatchValueNoRevert(matchId, side, val);
+                    });
+                    // also listen to input event to keep data in sync but don't re-render
+                    inp.addEventListener('input', function(e) {
+                        // just update the data model silently, no re-render
+                        const matchId = this.dataset.match;
+                        const side = this.dataset.side;
+                        const val = this.value;
+                        const t2 = tournaments.find(x => x.id === activeTournamentId);
+                        if (!t2) return;
+                        t2.groups.forEach(g => {
+                            const m = g.matches.find(mm => mm.id === matchId);
+                            if (m) {
+                                if (side === 'home') m.homeScore = val;
+                                else m.awayScore = val;
+                                m.played = (m.homeScore !== "" && m.awayScore !== "");
+                            }
+                        });
+                        // save but don't re-render
+                        saveTournamentsToStorage();
+                        // schedule a standings update after a delay
+                        scheduleStandingsUpdate();
+                    });
+                });
             });
         }
 
-        function updateGroupMatchValue(matchId, field, value) {
+        // Debounced standings update
+        let standingsTimeout = null;
+
+        function scheduleStandingsUpdate() {
+            if (standingsTimeout) clearTimeout(standingsTimeout);
+            standingsTimeout = setTimeout(() => {
+                if (currentWorkspaceTab === 'groups') {
+                    renderActiveGroupStandings();
+                }
+                standingsTimeout = null;
+            }, 600);
+        }
+
+        function updateGroupMatchValueNoRevert(matchId, side, value) {
             const t = tournaments.find(x => x.id === activeTournamentId);
             if (!t) return;
             t.groups.forEach(g => {
                 const m = g.matches.find(mm => mm.id === matchId);
-                if (m) { m[field] = value;
-                    m.played = (m.homeScore !== "" && m.awayScore !== ""); }
+                if (m) {
+                    if (side === 'home') m.homeScore = value;
+                    else m.awayScore = value;
+                    m.played = (m.homeScore !== "" && m.awayScore !== "");
+                }
             });
             saveTournamentsToStorage();
-            refreshCurrentView();
+            // update standings after a beat
+            scheduleStandingsUpdate();
+        }
+
+        // Legacy function kept for compatibility
+        function updateGroupMatchValue(matchId, field, value) {
+            // This is now handled by the new event listeners
+            updateGroupMatchValueNoRevert(matchId, field === 'homeScore' ? 'home' : 'away', value);
         }
 
         // ──────────────────────────────────────────────────────────────
@@ -1806,7 +2072,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  SCORE CHANGE HANDLER
+        //  SCORE CHANGE HANDLER (Knockout — now uses 'change' not 'input')
         // ──────────────────────────────────────────────────────────────
         function handleScoreChange(roundIdx, slotIdx, field, val) {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1814,12 +2080,17 @@
             if (!t.rounds[roundIdx] || !t.rounds[roundIdx].slots[slotIdx]) return;
             t.rounds[roundIdx].slots[slotIdx][field] = val;
             saveTournamentsToStorage();
-            renderActiveBracket();
+            // We do NOT re-render the bracket here to keep keyboard alive.
+            // The user can refresh manually or switch tabs.
+            // But we do update the specific input's value if it's still in focus.
+            // Actually, since we're using 'change' event, the input is already blurred.
+            // Just update the data and schedule a visual refresh if the user wants.
+            // We'll update connectors lightly.
             updateConnectors();
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: KNOCKOUT BRACKET
+        //  RENDER: KNOCKOUT BRACKET (with onchange for scores)
         // ──────────────────────────────────────────────────────────────
         function renderActiveBracket() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1906,9 +2177,20 @@
                         score1.placeholder = '-';
                         score1.maxLength = 2;
                         score1.className = 'score-input score-gold';
-                        score1.oninput = function() {
+                        score1.autocomplete = 'off';
+                        // Use 'change' event to avoid re-render during typing
+                        score1.addEventListener('change', function() {
                             handleScoreChange(rIdx, sIdx, 'scoreLeg1', this.value);
-                        };
+                        });
+                        // Also sync on input silently
+                        score1.addEventListener('input', function() {
+                            const t2 = tournaments.find(x => x.id === activeTournamentId);
+                            if (t2 && t2.rounds && t2.rounds[roundIdx] && t2.rounds[roundIdx].slots[
+                                sIdx]) {
+                                t2.rounds[roundIdx].slots[sIdx].scoreLeg1 = this.value;
+                                saveTournamentsToStorage();
+                            }
+                        });
 
                         let score2 = null;
                         if (!isFinals) {
@@ -1920,9 +2202,18 @@
                             score2.maxLength = 2;
                             score2.className = 'score-input score-dark';
                             score2.style.borderRadius = '0 9999px 9999px 0';
-                            score2.oninput = function() {
+                            score2.autocomplete = 'off';
+                            score2.addEventListener('change', function() {
                                 handleScoreChange(rIdx, sIdx, 'scoreLeg2', this.value);
-                            };
+                            });
+                            score2.addEventListener('input', function() {
+                                const t2 = tournaments.find(x => x.id === activeTournamentId);
+                                if (t2 && t2.rounds && t2.rounds[roundIdx] && t2.rounds[roundIdx]
+                                    .slots[sIdx]) {
+                                    t2.rounds[roundIdx].slots[sIdx].scoreLeg2 = this.value;
+                                    saveTournamentsToStorage();
+                                }
+                            });
                         } else {
                             score1.style.borderRadius = '0 9999px 9999px 0';
                         }
@@ -2311,14 +2602,12 @@
             loadTournamentsFromStorage();
             goHome();
             updateDistButtons();
-            // set default sort active state
             document.querySelectorAll('.sort-option').forEach(el => {
                 el.classList.toggle('active', el.dataset.sort === currentSort);
             });
             document.getElementById('sortLabel').textContent = 'Newest';
         });
 
-        // Close sort menu on outside click
         document.addEventListener('click', function(e) {
             const wrapper = document.querySelector('.sort-wrapper');
             if (wrapper && !wrapper.contains(e.target)) {
@@ -2326,6 +2615,9 @@
                 document.getElementById('sortMenu').classList.remove('open');
             }
         });
+
+        // Fix for iOS Safari: ensure inputs don't lose focus on scroll
+        document.addEventListener('touchstart', function() {}, { passive: true });
     </script>
 </body>
 </html>
