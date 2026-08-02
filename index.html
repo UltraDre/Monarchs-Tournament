@@ -2292,8 +2292,13 @@
                     const rB = nameB.getBoundingClientRect();
                     const rT = nameTarget.getBoundingClientRect();
 
-                    const xA = rA.right - rect.left;
-                    const xB = rB.right - rect.left;
+                    // Calculate right edge of the entire slot to leave a gap after the score box
+                    const slotRectA = slotAEl.getBoundingClientRect();
+                    const slotRectB = slotBEl.getBoundingClientRect();
+
+                    const gap = 10; // Small gap between score box and connector lines
+                    const xA = slotRectA.right - rect.left + gap;
+                    const xB = slotRectB.right - rect.left + gap;
                     const xT = rT.left - rect.left;
 
                     const yA = rA.top + rA.height / 2 - rect.top;
