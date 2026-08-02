@@ -291,9 +291,9 @@
 
         .bracket-col {
             flex: 1 1 0;
-            min-width: 200px;
+            min-width: 180px;
             position: relative;
-            padding: 0 12px;
+            padding: 0 6px;
             display: flex;
             flex-direction: column;
             flex: 1 1 0;
@@ -314,11 +314,12 @@
         }
 
         .champion-col {
-            flex: 0 0 200px !important;
-            min-width: 180px;
+            flex: 0 0 180px !important;
+            min-width: 160px;
             justify-content: center;
             align-items: center;
             position: relative;
+            padding: 0 4px !important;
         }
 
         #fixtures-grid .fixture-row {
@@ -430,7 +431,7 @@
         .bracket-wrapper {
             overflow: visible !important;
             max-height: none !important;
-            padding: 20px 10px !important;
+            padding: 20px 6px !important;
         }
 
         .bracket-full-page {
@@ -439,7 +440,7 @@
 
         .bracket-full-page #bracket-container {
             max-width: 100% !important;
-            padding: 0 10px;
+            padding: 0 4px;
             overflow: visible !important;
         }
 
@@ -447,56 +448,65 @@
             width: 100%;
             height: auto !important;
             min-height: 800px;
-            gap: 4px;
+            gap: 0px;
             overflow: visible !important;
             flex-wrap: nowrap;
+            align-items: stretch;
         }
 
         .bracket-full-page .bracket-col {
-            padding: 0 6px;
-            min-width: 150px;
+            padding: 0 2px !important;
+            min-width: 120px;
             flex: 1 1 0;
         }
 
         .bracket-full-page .bracket-col .col-title {
-            font-size: 10px;
-            margin-bottom: 16px;
+            font-size: 9px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
         }
 
         .bracket-full-page .name-input {
-            width: 120px;
+            width: 90px;
+            height: 28px;
+            font-size: 8px;
+            padding: 0 6px;
+            border-radius: 9999px 0 0 9999px;
+        }
+
+        .bracket-full-page .score-input {
+            width: 22px;
+            height: 28px;
+            font-size: 10px;
+        }
+
+        .bracket-full-page .champion-slot .name-input {
+            width: 110px;
             height: 32px;
             font-size: 9px;
         }
 
-        .bracket-full-page .score-input {
-            width: 28px;
-            height: 32px;
-            font-size: 12px;
-        }
-
-        .bracket-full-page .champion-slot .name-input {
-            width: 140px;
-            height: 36px;
-            font-size: 10px;
-        }
-
         .bracket-full-page .trophy-svg {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
         }
 
         .bracket-full-page .slot-pair-second {
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
 
         .bracket-full-page .slot-pair-first {
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .bracket-full-page .champion-col {
-            flex: 0 0 150px !important;
-            min-width: 130px;
+            flex: 0 0 120px !important;
+            min-width: 110px;
+            padding: 0 2px !important;
+        }
+
+        .bracket-full-page .slot {
+            padding: 1px 0;
         }
 
         #tab-view-knockout {
@@ -505,7 +515,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 20px 10px !important;
+            padding: 16px 4px !important;
             min-height: 100vh;
         }
 
@@ -815,31 +825,39 @@
                 font-size: 12px;
             }
             .bracket-full-page .bracket-col {
-                min-width: 120px;
-                padding: 0 4px;
+                min-width: 90px;
+                padding: 0 2px !important;
             }
             .bracket-full-page .name-input {
+                width: 65px;
+                height: 24px;
+                font-size: 7px;
+                padding: 0 4px;
+            }
+            .bracket-full-page .score-input {
+                width: 20px;
+                height: 24px;
+                font-size: 9px;
+            }
+            .bracket-full-page .champion-slot .name-input {
                 width: 80px;
                 height: 28px;
                 font-size: 8px;
-                padding: 0 8px;
-            }
-            .bracket-full-page .score-input {
-                width: 24px;
-                height: 28px;
-                font-size: 10px;
-            }
-            .bracket-full-page .champion-slot .name-input {
-                width: 100px;
-                height: 30px;
-                font-size: 9px;
             }
             .bracket-full-page .trophy-svg {
-                width: 24px;
-                height: 24px;
+                width: 20px;
+                height: 20px;
             }
             .bracket-full-page .slot-pair-second {
-                margin-bottom: 14px;
+                margin-bottom: 10px;
+            }
+            .bracket-full-page .bracket-col .col-title {
+                font-size: 8px;
+                margin-bottom: 8px;
+            }
+            .bracket-full-page .champion-col {
+                flex: 0 0 90px !important;
+                min-width: 80px;
             }
             #fixtures-grid .fixture-row .team-box {
                 font-size: 9px;
@@ -888,35 +906,39 @@
 
         @media (max-width: 480px) {
             .bracket-full-page .bracket-col {
-                min-width: 90px;
-                padding: 0 2px;
+                min-width: 70px;
+                padding: 0 1px !important;
             }
             .bracket-full-page .name-input {
-                width: 60px;
-                height: 24px;
-                font-size: 7px;
-                padding: 0 4px;
+                width: 50px;
+                height: 20px;
+                font-size: 6px;
+                padding: 0 3px;
             }
             .bracket-full-page .score-input {
-                width: 20px;
-                height: 24px;
-                font-size: 9px;
+                width: 16px;
+                height: 20px;
+                font-size: 8px;
             }
             .bracket-full-page .champion-slot .name-input {
-                width: 80px !important;
-                height: 26px !important;
-                font-size: 8px !important;
+                width: 65px !important;
+                height: 24px !important;
+                font-size: 7px !important;
             }
             .bracket-full-page .trophy-svg {
-                width: 20px !important;
-                height: 20px !important;
+                width: 16px !important;
+                height: 16px !important;
             }
             .bracket-full-page .slot-pair-second {
-                margin-bottom: 10px;
+                margin-bottom: 6px;
             }
             .bracket-full-page .bracket-col .col-title {
-                font-size: 8px;
-                margin-bottom: 10px;
+                font-size: 7px;
+                margin-bottom: 6px;
+            }
+            .bracket-full-page .champion-col {
+                flex: 0 0 70px !important;
+                min-width: 60px;
             }
             .bracket-col {
                 padding: 0 4px !important;
@@ -1242,7 +1264,7 @@
                 </div>
                 <div id="bracket-container" class="relative w-full max-w-full">
                     <svg id="connector-svg"></svg>
-                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full min-h-[800px] relative gap-1"></div>
+                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full min-h-[800px] relative gap-0"></div>
                 </div>
             </main>
 
@@ -2236,7 +2258,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  CONNECTOR LINES
+        //  CONNECTOR LINES — shortened by moving merge point to 15%
         // ──────────────────────────────────────────────────────────────
         function updateConnectors() {
             const svg = document.getElementById('connector-svg');
@@ -2255,14 +2277,12 @@
             const totalRounds = t.rounds.length;
             if (totalRounds < 2) return;
 
-            // Find the champion slot element to reposition it at the midpoint
             const championSlotEl = document.getElementById('champion-slot-container');
             let championSlotRect = null;
             if (championSlotEl) {
                 championSlotRect = championSlotEl.getBoundingClientRect();
             }
 
-            // First pass: calculate all connector paths and collect midY values
             let midYValues = [];
 
             for (let r = 0; r < totalRounds - 1; r++) {
@@ -2306,10 +2326,11 @@
                     const isBWinner = targetSlot.name && slotB.name && targetSlot.name === slotB.name;
                     const isWinner = isAWinner || isBWinner;
 
-                    const mergeX = (Math.max(xA, xB) + xT) / 2;
+                    // ★ MERGE POINT MOVED TO 15% (from 50%) — drastically shorter connector lines
+                    const gap = xT - Math.max(xA, xB);
+                    const mergeX = Math.max(xA, xB) + gap * 0.15;
                     const midY = (yA + yB) / 2;
 
-                    // Store midY for champion positioning (only from the last round before champion)
                     if (r === totalRounds - 2) {
                         midYValues.push(midY);
                     }
@@ -2351,9 +2372,7 @@
                 }
             }
 
-            // Position the champion slot at the midpoint of the connector lines
             if (championSlotEl && midYValues.length > 0) {
-                // Average the midY values from the semifinals
                 const avgMidY = midYValues.reduce((a, b) => a + b, 0) / midYValues.length;
                 const currentRect = championSlotEl.getBoundingClientRect();
                 const currentCenterY = currentRect.top + currentRect.height / 2 - rect.top;
