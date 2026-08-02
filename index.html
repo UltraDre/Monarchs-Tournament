@@ -447,11 +447,11 @@
             width: 100%;
             height: auto !important;
             min-height: 800px;
-            gap: 24px !important;
+            gap: 48px !important;
             overflow: visible !important;
             flex-wrap: nowrap;
             justify-content: center !important;
-            padding: 0 30px !important; /* Added to prevent cut-off on narrow screens */
+            padding: 0 30px !important;
         }
 
         .bracket-full-page .bracket-col {
@@ -2297,10 +2297,10 @@
                     const slotRectA = slotAEl.getBoundingClientRect();
                     const slotRectB = slotBEl.getBoundingClientRect();
 
-                    const gap = 10; // Small gap between score box and connector lines
+                    const gap = 10; // Maintain balanced gap on both sides
                     const xA = slotRectA.right - rect.left + gap;
                     const xB = slotRectB.right - rect.left + gap;
-                    const xT = rT.left - rect.left;
+                    const xT = rT.left - rect.left - gap; // Add gap before next name box
 
                     const yA = rA.top + rA.height / 2 - rect.top;
                     const yB = rB.top + rB.height / 2 - rect.top;
