@@ -447,15 +447,17 @@
             width: 100%;
             height: auto !important;
             min-height: 800px;
-            gap: 4px;
+            gap: 24px !important;
             overflow: visible !important;
             flex-wrap: nowrap;
+            justify-content: center !important;
         }
 
         .bracket-full-page .bracket-col {
-            padding: 0 6px;
-            min-width: 150px;
-            flex: 1 1 0;
+            padding: 0 4px !important;
+            min-width: 0 !important;
+            flex: 0 0 auto !important;
+            width: auto !important;
         }
 
         .bracket-full-page .bracket-col .col-title {
@@ -1917,7 +1919,7 @@
                 }
             });
             Object.keys(map).forEach(t => { map[t].gd = map[t].gf - map[t].ga; });
-            return Object.values(map).sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+            return Object.values(map).sort((a, b) => b.pts - a.pts || b.gd - b.gd || b.gf - b.gf);
         }
 
         // ──────────────────────────────────────────────────────────────
