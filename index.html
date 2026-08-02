@@ -194,8 +194,10 @@
             flex-direction: row;
             align-items: center;
             gap: 12px;
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            margin: 0 auto;
+            position: relative;
         }
 
         .champion-slot .name-input {
@@ -291,7 +293,7 @@
             flex: 1 1 0;
             min-width: 200px;
             position: relative;
-            padding: 0 24px;
+            padding: 0 12px;
             display: flex;
             flex-direction: column;
             flex: 1 1 0;
@@ -312,10 +314,11 @@
         }
 
         .champion-col {
-            flex: 0 0 220px !important;
-            min-width: 200px;
+            flex: 0 0 200px !important;
+            min-width: 180px;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
 
         #fixtures-grid .fixture-row {
@@ -444,13 +447,13 @@
             width: 100%;
             height: auto !important;
             min-height: 800px;
-            gap: 8px;
+            gap: 4px;
             overflow: visible !important;
             flex-wrap: nowrap;
         }
 
         .bracket-full-page .bracket-col {
-            padding: 0 8px;
+            padding: 0 6px;
             min-width: 150px;
             flex: 1 1 0;
         }
@@ -492,8 +495,8 @@
         }
 
         .bracket-full-page .champion-col {
-            flex: 0 0 160px !important;
-            min-width: 140px;
+            flex: 0 0 150px !important;
+            min-width: 130px;
         }
 
         #tab-view-knockout {
@@ -1239,7 +1242,7 @@
                 </div>
                 <div id="bracket-container" class="relative w-full max-w-full">
                     <svg id="connector-svg"></svg>
-                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full min-h-[800px] relative gap-2"></div>
+                    <div id="bracket-viewport" class="bracket-viewport flex items-center justify-between w-full min-h-[800px] relative gap-1"></div>
                 </div>
             </main>
 
@@ -2119,22 +2122,20 @@
                     div.className = "slot champion-slot";
                     div.setAttribute('data-round', rIdx);
                     div.setAttribute('data-slot', 0);
+                    div.id = 'champion-slot-container';
                     div.innerHTML = `
-                            <div class="flex flex-col items-center">
-                                <span class="text-[9px] font-black text-amber-500 tracking-wider mb-2">WINNER</span>
-                                <div class="flex items-center gap-3">
-                                    <input type="text" id="winner-box" value="${slot.name||''}" placeholder="CROWN CHAMPION" class="name-input text-center font-black rounded-full" style="width:160px;height:40px;border:2px solid #e5c122;border-radius:9999px;" readonly />
-                                    <svg class="trophy-svg" width="40" height="40" viewBox="0 0 100 100" fill="none">
-                                        <rect x="32" y="78" width="36" height="10" rx="3" fill="#151928" stroke="#8e7323" stroke-width="2"/>
-                                        <path d="M38 78 L43 66 L57 66 L62 78Z" fill="#8e7323"/>
-                                        <rect x="46" y="52" width="8" height="15" fill="#ffd13b"/>
-                                        <path d="M28 24 C16 24,16 42,28 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
-                                        <path d="M72 24 C84 24,84 42,72 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
-                                        <path d="M28 18 C28 52,72 52,72 18Z" fill="#ffd13b"/>
-                                        <rect x="25" y="14" width="50" height="5" rx="2" fill="#ffe980"/>
-                                        <polygon points="50,23 53,30 60,30 55,34 57,41 50,37 43,41 45,34 40,30 47,30" fill="#fff" opacity="0.9"/>
-                                    </svg>
-                                </div>
+                            <div class="flex items-center gap-3">
+                                <input type="text" id="winner-box" value="${slot.name||''}" placeholder="CROWN CHAMPION" class="name-input text-center font-black rounded-full" style="width:160px;height:40px;border:2px solid #e5c122;border-radius:9999px;" readonly />
+                                <svg class="trophy-svg" width="40" height="40" viewBox="0 0 100 100" fill="none">
+                                    <rect x="32" y="78" width="36" height="10" rx="3" fill="#151928" stroke="#8e7323" stroke-width="2"/>
+                                    <path d="M38 78 L43 66 L57 66 L62 78Z" fill="#8e7323"/>
+                                    <rect x="46" y="52" width="8" height="15" fill="#ffd13b"/>
+                                    <path d="M28 24 C16 24,16 42,28 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
+                                    <path d="M72 24 C84 24,84 42,72 42" fill="none" stroke="#ffd13b" stroke-width="5" stroke-linecap="round"/>
+                                    <path d="M28 18 C28 52,72 52,72 18Z" fill="#ffd13b"/>
+                                    <rect x="25" y="14" width="50" height="5" rx="2" fill="#ffe980"/>
+                                    <polygon points="50,23 53,30 60,30 55,34 57,41 50,37 43,41 45,34 40,30 47,30" fill="#fff" opacity="0.9"/>
+                                </svg>
                             </div>
                         `;
                     col.appendChild(div);
@@ -2254,6 +2255,16 @@
             const totalRounds = t.rounds.length;
             if (totalRounds < 2) return;
 
+            // Find the champion slot element to reposition it at the midpoint
+            const championSlotEl = document.getElementById('champion-slot-container');
+            let championSlotRect = null;
+            if (championSlotEl) {
+                championSlotRect = championSlotEl.getBoundingClientRect();
+            }
+
+            // First pass: calculate all connector paths and collect midY values
+            let midYValues = [];
+
             for (let r = 0; r < totalRounds - 1; r++) {
                 const slots = t.rounds[r].slots;
                 const matchCount = slots.length / 2;
@@ -2296,6 +2307,12 @@
                     const isWinner = isAWinner || isBWinner;
 
                     const mergeX = (Math.max(xA, xB) + xT) / 2;
+                    const midY = (yA + yB) / 2;
+
+                    // Store midY for champion positioning (only from the last round before champion)
+                    if (r === totalRounds - 2) {
+                        midYValues.push(midY);
+                    }
 
                     const winColor = '#ffd13b';
                     const normColor = 'rgba(255,255,255,0.35)';
@@ -2325,7 +2342,6 @@
                         isWinner
                     );
 
-                    const midY = (yA + yB) / 2;
                     addConnectorPath(svg,
                         `M ${mergeX} ${midY} H ${xT}`,
                         isWinner ? winColor : normColor,
@@ -2333,6 +2349,16 @@
                         isWinner
                     );
                 }
+            }
+
+            // Position the champion slot at the midpoint of the connector lines
+            if (championSlotEl && midYValues.length > 0) {
+                // Average the midY values from the semifinals
+                const avgMidY = midYValues.reduce((a, b) => a + b, 0) / midYValues.length;
+                const currentRect = championSlotEl.getBoundingClientRect();
+                const currentCenterY = currentRect.top + currentRect.height / 2 - rect.top;
+                const offsetY = avgMidY - currentCenterY;
+                championSlotEl.style.transform = `translateY(${offsetY}px)`;
             }
         }
 
