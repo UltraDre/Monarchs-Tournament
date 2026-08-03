@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
         * {
             box-sizing: border-box;
@@ -24,7 +24,7 @@
         }
 
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: #0d0f1a;
             background-image:
                 radial-gradient(circle at 10% 20%, rgba(16, 24, 48, 0.45) 0%, transparent 50%),
@@ -321,196 +321,80 @@
             position: relative;
         }
 
-        #fixtures-grid .fixture-row {
+        /* ── FIXTURES NEW DESIGN ── */
+        .fixture-row-modern {
             display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: space-between;
             width: 100%;
-            max-width: 440px;
-            margin: 0 auto 6px auto;
+            max-width: 580px;
+            margin: 0 auto 2px auto; /* Reduced margin to pack them very close */
+            padding: 12px 18px;
+            background: rgba(26, 31, 46, 0.75);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        #fixtures-grid .fixture-row .team-box {
-            background: #fff;
-            color: #0f111a;
+        .fixture-modern-left, .fixture-modern-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fixture-modern-name {
+            font-size: 10px; /* Very small */
             font-weight: 800;
-            font-size: 11px;
-            height: 34px;
-            padding: 0 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            border-radius: 6px 0 0 6px;
-            flex: 1 1 0;
-            min-width: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            text-transform: uppercase;
-            overflow: hidden;
+            color: #ffffff;
             white-space: nowrap;
+            overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        #fixtures-grid .fixture-row .team-box.away {
-            border-radius: 0 6px 6px 0;
-        }
-
-        #fixtures-grid .fixture-row .score-box {
-            width: 32px;
-            height: 34px;
-            background: #ffd13b;
-            color: #0d0f1a;
-            font-weight: 900;
-            font-size: 14px;
+            max-width: 150px;
+            text-transform: uppercase;
             text-align: center;
-            border: none;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            width: 100%;
         }
 
-        #fixtures-grid .fixture-row .score-box:focus {
-            outline: none;
-            filter: brightness(1.1);
-        }
-
-        #fixtures-grid .fixture-row .vs-badge {
-            background: #14182b;
-            color: rgba(255, 255, 255, 0.4);
-            font-weight: 900;
-            font-size: 9px;
-            padding: 0 10px;
-            height: 34px;
+        .fixture-modern-center {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 10px;
             flex-shrink: 0;
-            border-left: 1px solid rgba(255, 255, 255, 0.04);
-            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            margin: 0 12px;
+        }
+
+        .fixture-modern-scorebox {
+            width: 48px;
+            height: 40px;
+            background: #151b2c;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #fff;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 900;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .fixture-modern-scorebox:focus {
+            border-color: #ffd13b;
+        }
+
+        .fixture-modern-scorebox::placeholder {
+            color: rgba(255, 255, 255, 0.1);
+            font-weight: 400;
+        }
+
+        .fixture-modern-vs {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
             letter-spacing: 0.1em;
         }
-
-        #knockout-guard-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 40;
-            background: rgba(13, 15, 26, 0.94);
-            backdrop-filter: blur(6px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 24px;
-            gap: 16px;
-            border-radius: 16px;
-        }
-
-        #knockout-guard-overlay.hidden {
-            display: none !important;
-        }
-
-        .max-w-6xl {
-            max-width: 1280px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .max-w-4xl {
-            max-width: 1024px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .max-w-3xl {
-            max-width: 768px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .bracket-wrapper {
-            overflow: visible !important;
-            max-height: none !important;
-            padding: 20px 10px !important;
-        }
-
-        .bracket-full-page {
-            overflow: visible !important;
-        }
-
-        .bracket-full-page #bracket-container {
-            max-width: 100% !important;
-            padding: 0 10px;
-            overflow: visible !important;
-        }
-
-        .bracket-full-page #bracket-viewport {
-            width: 100%;
-            height: auto !important;
-            min-height: 800px;
-            gap: 48px !important;
-            overflow: visible !important;
-            flex-wrap: nowrap;
-            justify-content: center !important;
-            padding: 0 30px !important;
-        }
-
-        .bracket-full-page .bracket-col {
-            padding: 0 4px !important;
-            min-width: 0 !important;
-            flex: 0 0 auto !important;
-            width: auto !important;
-        }
-
-        .bracket-full-page .bracket-col .col-title {
-            font-size: 10px;
-            margin-bottom: 16px;
-        }
-
-        .bracket-full-page .name-input {
-            width: 120px;
-            height: 32px;
-            font-size: 9px;
-        }
-
-        .bracket-full-page .score-input {
-            width: 28px;
-            height: 32px;
-            font-size: 12px;
-        }
-
-        .bracket-full-page .champion-slot .name-input {
-            width: 140px;
-            height: 36px;
-            font-size: 10px;
-        }
-
-        .bracket-full-page .trophy-svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .bracket-full-page .slot-pair-second {
-            margin-bottom: 20px;
-        }
-
-        .bracket-full-page .slot-pair-first {
-            margin-bottom: 2px;
-        }
-
-        .bracket-full-page .champion-col {
-            flex: 0 0 150px !important;
-            min-width: 130px;
-        }
-
-        #tab-view-knockout {
-            overflow: visible !important;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 20px 10px !important;
-            min-height: 100vh;
-        }
+        /* ── END FIXTURES NEW DESIGN ── */
 
         .floating-controls {
             position: sticky;
@@ -789,13 +673,11 @@
             margin: 0;
         }
 
-        /* score-input no-reflow */
         .score-input,
         .score-box {
             touch-action: manipulation;
         }
 
-        /* mobile-friendly tweaks */
         @media (max-width: 640px) {
             .floating-controls {
                 padding: 8px 10px;
@@ -844,21 +726,7 @@
             .bracket-full-page .slot-pair-second {
                 margin-bottom: 14px;
             }
-            #fixtures-grid .fixture-row .team-box {
-                font-size: 9px;
-                height: 28px;
-                padding: 0 8px;
-            }
-            #fixtures-grid .fixture-row .score-box {
-                width: 26px;
-                height: 28px;
-                font-size: 12px;
-            }
-            #fixtures-grid .fixture-row .vs-badge {
-                height: 28px;
-                font-size: 7px;
-                padding: 0 6px;
-            }
+            
             .name-input {
                 width: 100px;
                 height: 30px;
@@ -886,6 +754,29 @@
             }
             #groups-standings-grid .glass-card {
                 padding: 10px !important;
+            }
+
+            /* Fixtures Responsive (Mobile) */
+            .fixture-row-modern {
+                padding: 10px 12px;
+                max-width: 100%;
+                margin-bottom: 2px;
+            }
+            .fixture-modern-name {
+                font-size: 9px; /* Very small */
+                max-width: 100px;
+            }
+            .fixture-modern-scorebox {
+                width: 36px;
+                height: 32px;
+                font-size: 14px;
+            }
+            .fixture-modern-center {
+                margin: 0 6px;
+                gap: 8px;
+            }
+            .fixture-modern-vs {
+                font-size: 9px;
             }
         }
 
@@ -947,25 +838,7 @@
                 width: 24px !important;
                 height: 24px !important;
             }
-            #fixtures-grid .fixture-row .team-box {
-                font-size: 8px;
-                height: 24px;
-                padding: 0 4px;
-            }
-            #fixtures-grid .fixture-row .score-box {
-                width: 22px;
-                height: 24px;
-                font-size: 10px;
-            }
-            #fixtures-grid .fixture-row .vs-badge {
-                height: 24px;
-                font-size: 6px;
-                padding: 0 4px;
-            }
-            #fixtures-grid .fixture-row {
-                gap: 2px;
-                max-width: 100%;
-            }
+            
             #groups-standings-grid td,
             #groups-standings-grid th {
                 padding: 2px 2px !important;
@@ -979,6 +852,25 @@
                 width: 26px;
                 height: 26px;
                 font-size: 10px;
+            }
+
+            /* Fixtures Responsive (Very Small) */
+            .fixture-row-modern {
+                padding: 8px 6px;
+                margin-bottom: 2px;
+            }
+            .fixture-modern-name {
+                font-size: 8px; /* Very small */
+                max-width: 70px;
+            }
+            .fixture-modern-scorebox {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            .fixture-modern-center {
+                margin: 0 2px;
+                gap: 6px;
             }
         }
     </style>
@@ -1924,7 +1816,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: FIXTURES (with no-reflow score updates)
+        //  RENDER: FIXTURES (REDESIGNED TO MATCH IMAGE)
         // ──────────────────────────────────────────────────────────────
         function renderActiveFixturesGrid() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1933,43 +1825,46 @@
             grid.innerHTML = '';
             t.groups.forEach(group => {
                 const container = document.createElement('div');
-                container.className = "flex flex-col gap-4";
+                container.className = "flex flex-col gap-4 mb-8";
                 let html = '';
                 group.matches.forEach(m => {
-                    // Ensure scores are strings
                     const hs = (m.homeScore ?? '').toString();
                     const as = (m.awayScore ?? '').toString();
                     html += `
-                            <div class="fixture-row" data-match-id="${m.id}">
-                                <div class="team-box" title="${m.home}">${m.home}</div>
-                                <input type="text" inputmode="numeric" value="${hs}" placeholder="-" 
-                                       class="score-box" data-match="${m.id}" data-side="home" 
-                                       autocomplete="off" />
-                                <div class="vs-badge">VS</div>
-                                <input type="text" inputmode="numeric" value="${as}" placeholder="-" 
-                                       class="score-box" data-match="${m.id}" data-side="away" 
-                                       autocomplete="off" />
-                                <div class="team-box away" title="${m.away}">${m.away}</div>
+                            <div class="fixture-row-modern" data-match-id="${m.id}">
+                                <div class="fixture-modern-left">
+                                    <div class="fixture-modern-name" title="${m.home}">${m.home}</div>
+                                </div>
+                                <div class="fixture-modern-center">
+                                    <input type="text" inputmode="numeric" value="${hs}" placeholder="" 
+                                           class="fixture-modern-scorebox" data-match="${m.id}" data-side="home" 
+                                           autocomplete="off" />
+                                    <div class="fixture-modern-vs">VS</div>
+                                    <input type="text" inputmode="numeric" value="${as}" placeholder="" 
+                                           class="fixture-modern-scorebox" data-match="${m.id}" data-side="away" 
+                                           autocomplete="off" />
+                                </div>
+                                <div class="fixture-modern-right">
+                                    <div class="fixture-modern-name" title="${m.away}">${m.away}</div>
+                                </div>
                             </div>
                         `;
                 });
                 container.innerHTML = `
-                        <div class="border-b border-white/5 pb-2"><h3 class="text-xs font-black text-gray-300 tracking-[0.25em] uppercase">${group.name}</h3></div>
+                        <div class="border-b border-white/5 pb-2 mb-2"><h3 class="text-xs font-black text-gray-300 tracking-[0.25em] uppercase">${group.name}</h3></div>
                         <div class="flex flex-col gap-2">${html}</div>
                     `;
                 grid.appendChild(container);
 
-                // attach event listeners directly to the inputs
-                container.querySelectorAll('.score-box').forEach(inp => {
+                // attach event listeners to the new inputs
+                container.querySelectorAll('.fixture-modern-scorebox').forEach(inp => {
                     inp.addEventListener('change', function(e) {
                         const matchId = this.dataset.match;
                         const side = this.dataset.side;
                         const val = this.value;
                         updateGroupMatchValueNoRevert(matchId, side, val);
                     });
-                    // also listen to input event to keep data in sync but don't re-render
                     inp.addEventListener('input', function(e) {
-                        // just update the data model silently, no re-render
                         const matchId = this.dataset.match;
                         const side = this.dataset.side;
                         const val = this.value;
@@ -1983,9 +1878,7 @@
                                 m.played = (m.homeScore !== "" && m.awayScore !== "");
                             }
                         });
-                        // save but don't re-render
                         saveTournamentsToStorage();
-                        // schedule a standings update after a delay
                         scheduleStandingsUpdate();
                     });
                 });
@@ -2017,14 +1910,7 @@
                 }
             });
             saveTournamentsToStorage();
-            // update standings after a beat
             scheduleStandingsUpdate();
-        }
-
-        // Legacy function kept for compatibility
-        function updateGroupMatchValue(matchId, field, value) {
-            // This is now handled by the new event listeners
-            updateGroupMatchValueNoRevert(matchId, field === 'homeScore' ? 'home' : 'away', value);
         }
 
         // ──────────────────────────────────────────────────────────────
@@ -2080,7 +1966,7 @@
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  SCORE CHANGE HANDLER (Knockout — now uses 'change' not 'input')
+        //  SCORE CHANGE HANDLER (Knockout)
         // ──────────────────────────────────────────────────────────────
         function handleScoreChange(roundIdx, slotIdx, field, val) {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -2088,17 +1974,11 @@
             if (!t.rounds[roundIdx] || !t.rounds[roundIdx].slots[slotIdx]) return;
             t.rounds[roundIdx].slots[slotIdx][field] = val;
             saveTournamentsToStorage();
-            // We do NOT re-render the bracket here to keep keyboard alive.
-            // The user can refresh manually or switch tabs.
-            // But we do update the specific input's value if it's still in focus.
-            // Actually, since we're using 'change' event, the input is already blurred.
-            // Just update the data and schedule a visual refresh if the user wants.
-            // We'll update connectors lightly.
             updateConnectors();
         }
 
         // ──────────────────────────────────────────────────────────────
-        //  RENDER: KNOCKOUT BRACKET (with onchange for scores)
+        //  RENDER: KNOCKOUT BRACKET
         // ──────────────────────────────────────────────────────────────
         function renderActiveBracket() {
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -2184,11 +2064,9 @@
                         score1.maxLength = 2;
                         score1.className = 'score-input score-gold';
                         score1.autocomplete = 'off';
-                        // Use 'change' event to avoid re-render during typing
                         score1.addEventListener('change', function() {
                             handleScoreChange(rIdx, sIdx, 'scoreLeg1', this.value);
                         });
-                        // Also sync on input silently
                         score1.addEventListener('input', function() {
                             const t2 = tournaments.find(x => x.id === activeTournamentId);
                             if (t2 && t2.rounds && t2.rounds[roundIdx] && t2.rounds[roundIdx].slots[
@@ -2258,14 +2136,12 @@
             const totalRounds = t.rounds.length;
             if (totalRounds < 2) return;
 
-            // Find the champion slot element to reposition it at the midpoint
             const championSlotEl = document.getElementById('champion-slot-container');
             let championSlotRect = null;
             if (championSlotEl) {
                 championSlotRect = championSlotEl.getBoundingClientRect();
             }
 
-            // First pass: calculate all connector paths and collect midY values
             let midYValues = [];
 
             for (let r = 0; r < totalRounds - 1; r++) {
@@ -2293,14 +2169,13 @@
                     const rB = nameB.getBoundingClientRect();
                     const rT = nameTarget.getBoundingClientRect();
 
-                    // Calculate right edge of the entire slot to leave a gap after the score box
                     const slotRectA = slotAEl.getBoundingClientRect();
                     const slotRectB = slotBEl.getBoundingClientRect();
 
-                    const gap = 10; // Maintain balanced gap on both sides
+                    const gap = 10;
                     const xA = slotRectA.right - rect.left + gap;
                     const xB = slotRectB.right - rect.left + gap;
-                    const xT = rT.left - rect.left - gap; // Add gap before next name box
+                    const xT = rT.left - rect.left - gap;
 
                     const yA = rA.top + rA.height / 2 - rect.top;
                     const yB = rB.top + rB.height / 2 - rect.top;
@@ -2317,7 +2192,6 @@
                     const mergeX = (Math.max(xA, xB) + xT) / 2;
                     const midY = (yA + yB) / 2;
 
-                    // Store midY for champion positioning (only from the last round before champion)
                     if (r === totalRounds - 2) {
                         midYValues.push(midY);
                     }
@@ -2359,9 +2233,7 @@
                 }
             }
 
-            // Position the champion slot at the midpoint of the connector lines
             if (championSlotEl && midYValues.length > 0) {
-                // Average the midY values from the semifinals
                 const avgMidY = midYValues.reduce((a, b) => a + b, 0) / midYValues.length;
                 const currentRect = championSlotEl.getBoundingClientRect();
                 const currentCenterY = currentRect.top + currentRect.height / 2 - rect.top;
@@ -2652,7 +2524,6 @@
             }
         });
 
-        // Fix for iOS Safari: ensure inputs don't lose focus on scroll
         document.addEventListener('touchstart', function() {}, { passive: true });
     </script>
 </body>
