@@ -328,15 +328,16 @@
             justify-content: space-between;
             width: 100%;
             max-width: 580px;
-            margin: 0 auto 2px auto; /* Gap maintained exactly at 2px */
-            padding: 8px 18px; /* Reduced height via padding */
+            margin: 0 auto 2px auto;
+            padding: 8px 18px;
             background: rgba(26, 31, 46, 0.75);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        .fixture-modern-left, .fixture-modern-right {
+        .fixture-modern-left,
+        .fixture-modern-right {
             flex: 1;
             display: flex;
             justify-content: center;
@@ -344,7 +345,7 @@
         }
 
         .fixture-modern-name {
-            font-size: 10px; /* Very small */
+            font-size: 13px;
             font-weight: 800;
             color: #ffffff;
             white-space: nowrap;
@@ -365,31 +366,32 @@
         }
 
         .fixture-modern-scorebox {
-            width: 48px;
-            height: 40px;
-            background: #151b2c;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #fff;
+            width: 60px;
+            height: 48px;
+            background: #ffd13b;
+            border-radius: 8px;
+            border: 1px solid rgba(180, 150, 30, 0.25);
+            color: #0d0f1a;
             text-align: center;
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 900;
             outline: none;
-            transition: border-color 0.2s, background-color 0.2s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
         }
 
         .fixture-modern-scorebox:focus {
-            border-color: #ffd13b;
+            border-color: #a07d0f;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.25), inset 0 1px 3px rgba(0, 0, 0, 0.12);
         }
 
         .fixture-modern-scorebox::placeholder {
-            color: rgba(255, 255, 255, 0.1);
+            color: rgba(0, 0, 0, 0.18);
             font-weight: 400;
         }
 
         .fixture-modern-vs {
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 700;
             color: rgba(255, 255, 255, 0.3);
             letter-spacing: 0.1em;
@@ -726,7 +728,7 @@
             .bracket-full-page .slot-pair-second {
                 margin-bottom: 14px;
             }
-            
+
             .name-input {
                 width: 100px;
                 height: 30px;
@@ -758,25 +760,26 @@
 
             /* Fixtures Responsive (Mobile) */
             .fixture-row-modern {
-                padding: 6px 12px; /* Reduced height via padding */
+                padding: 6px 12px;
                 max-width: 100%;
-                margin-bottom: 2px; /* Maintained gap */
+                margin-bottom: 2px;
             }
             .fixture-modern-name {
-                font-size: 9px; /* Very small */
+                font-size: 11px;
                 max-width: 100px;
             }
             .fixture-modern-scorebox {
-                width: 36px;
-                height: 32px;
-                font-size: 14px;
+                width: 44px;
+                height: 38px;
+                font-size: 18px;
+                border-radius: 6px;
             }
             .fixture-modern-center {
                 margin: 0 6px;
                 gap: 8px;
             }
             .fixture-modern-vs {
-                font-size: 9px;
+                font-size: 10px;
             }
         }
 
@@ -838,7 +841,7 @@
                 width: 24px !important;
                 height: 24px !important;
             }
-            
+
             #groups-standings-grid td,
             #groups-standings-grid th {
                 padding: 2px 2px !important;
@@ -856,21 +859,25 @@
 
             /* Fixtures Responsive (Very Small) */
             .fixture-row-modern {
-                padding: 6px 6px; /* Reduced height via padding */
-                margin-bottom: 2px; /* Maintained gap */
+                padding: 6px 6px;
+                margin-bottom: 2px;
             }
             .fixture-modern-name {
-                font-size: 8px; /* Very small */
+                font-size: 10px;
                 max-width: 70px;
             }
             .fixture-modern-scorebox {
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
+                width: 36px;
+                height: 32px;
+                font-size: 16px;
+                border-radius: 6px;
             }
             .fixture-modern-center {
                 margin: 0 2px;
                 gap: 6px;
+            }
+            .fixture-modern-vs {
+                font-size: 9px;
             }
         }
     </style>
