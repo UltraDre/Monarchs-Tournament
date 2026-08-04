@@ -328,15 +328,16 @@
             justify-content: space-between;
             width: 100%;
             max-width: 580px;
-            margin: 0 auto 2px auto; /* Gap maintained exactly at 2px */
-            padding: 8px 18px; /* Reduced height via padding */
+            margin: 0 auto 2px auto;
+            padding: 8px 18px;
             background: rgba(26, 31, 46, 0.75);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        .fixture-modern-left, .fixture-modern-right {
+        .fixture-modern-left,
+        .fixture-modern-right {
             flex: 1;
             display: flex;
             justify-content: center;
@@ -344,7 +345,7 @@
         }
 
         .fixture-modern-name {
-            font-size: 10px; /* Very small */
+            font-size: 10px;
             font-weight: 800;
             color: #ffffff;
             white-space: nowrap;
@@ -376,7 +377,7 @@
             font-weight: 900;
             outline: none;
             transition: border-color 0.2s, background-color 0.2s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .fixture-modern-scorebox:focus {
@@ -513,6 +514,25 @@
             background: rgba(255, 215, 0, 0.22);
             border-color: rgba(255, 215, 0, 0.35);
         }
+        /* Zoom buttons — very small */
+        .floating-controls .icon-btn.zoom-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+            font-weight: 900;
+            background: rgba(20, 24, 43, 0.5);
+            border-color: rgba(255, 255, 255, 0.06);
+            color: #9aa3b8;
+            line-height: 1;
+        }
+        .floating-controls .icon-btn.zoom-btn:hover {
+            background: rgba(255, 215, 0, 0.12);
+            color: #ffd13b;
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        .floating-controls .icon-btn.zoom-btn:active {
+            transform: scale(0.92);
+        }
 
         .main-content {
             padding-top: 4px;
@@ -520,6 +540,8 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            transform-origin: top center;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #active-nav-tabs .pill-nav {
@@ -678,6 +700,17 @@
             touch-action: manipulation;
         }
 
+        /* Zoom indicator - tiny pill */
+        .zoom-indicator {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.04em;
+            min-width: 28px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
         @media (max-width: 640px) {
             .floating-controls {
                 padding: 8px 10px;
@@ -698,6 +731,11 @@
                 width: 30px;
                 height: 30px;
                 font-size: 12px;
+            }
+            .floating-controls .icon-btn.zoom-btn {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
             }
             .bracket-full-page .bracket-col {
                 min-width: 120px;
@@ -726,7 +764,7 @@
             .bracket-full-page .slot-pair-second {
                 margin-bottom: 14px;
             }
-            
+
             .name-input {
                 width: 100px;
                 height: 30px;
@@ -756,14 +794,13 @@
                 padding: 10px !important;
             }
 
-            /* Fixtures Responsive (Mobile) */
             .fixture-row-modern {
-                padding: 6px 12px; /* Reduced height via padding */
+                padding: 6px 12px;
                 max-width: 100%;
-                margin-bottom: 2px; /* Maintained gap */
+                margin-bottom: 2px;
             }
             .fixture-modern-name {
-                font-size: 9px; /* Very small */
+                font-size: 9px;
                 max-width: 100px;
             }
             .fixture-modern-scorebox {
@@ -777,6 +814,10 @@
             }
             .fixture-modern-vs {
                 font-size: 9px;
+            }
+            .zoom-indicator {
+                font-size: 8px;
+                min-width: 22px;
             }
         }
 
@@ -838,7 +879,7 @@
                 width: 24px !important;
                 height: 24px !important;
             }
-            
+
             #groups-standings-grid td,
             #groups-standings-grid th {
                 padding: 2px 2px !important;
@@ -853,14 +894,18 @@
                 height: 26px;
                 font-size: 10px;
             }
+            .floating-controls .icon-btn.zoom-btn {
+                width: 22px;
+                height: 22px;
+                font-size: 9px;
+            }
 
-            /* Fixtures Responsive (Very Small) */
             .fixture-row-modern {
-                padding: 6px 6px; /* Reduced height via padding */
-                margin-bottom: 2px; /* Maintained gap */
+                padding: 6px 6px;
+                margin-bottom: 2px;
             }
             .fixture-modern-name {
-                font-size: 8px; /* Very small */
+                font-size: 8px;
                 max-width: 70px;
             }
             .fixture-modern-scorebox {
@@ -871,6 +916,10 @@
             .fixture-modern-center {
                 margin: 0 2px;
                 gap: 6px;
+            }
+            .zoom-indicator {
+                font-size: 7px;
+                min-width: 18px;
             }
         }
     </style>
@@ -900,6 +949,10 @@
             </div>
 
             <div id="view-actions" class="right-buttons hidden">
+                <!-- ZOOM CONTROLS -->
+                <button onclick="zoomOut()" class="icon-btn zoom-btn" title="Zoom Out">−</button>
+                <span class="zoom-indicator" id="zoomLevelDisplay">100%</span>
+                <button onclick="zoomIn()" class="icon-btn zoom-btn" title="Zoom In">+</button>
                 <button onclick="downloadBackup()" class="icon-btn green" title="Download Backup">
                     <i class="fa-solid fa-download"></i>
                 </button>
@@ -910,8 +963,8 @@
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
-        <div class="main-content">
+        <!-- MAIN CONTENT (zoom target) -->
+        <div class="main-content" id="mainContent">
 
             <!-- HOME VIEW -->
             <main id="home-view" class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-6xl mx-auto w-full gap-8">
@@ -1180,6 +1233,12 @@
         let _skipRender = false;
         let _pendingStandingsUpdate = null;
 
+        // ── ZOOM STATE ──
+        let currentZoom = 1.0;
+        const ZOOM_MIN = 0.5;
+        const ZOOM_MAX = 2.0;
+        const ZOOM_STEP = 0.1;
+
         // ── SORT STATE ──
         let currentSort = 'date-desc';
         let sortMenuOpen = false;
@@ -1190,6 +1249,27 @@
             "Ruona", "Innocent", "Ultimatetee", "Adex", "Colepalmer",
             "ToxicT", "Bayern-Munich", "AS-Roma", "Aston-villa", "PSG"
         ];
+
+        // ──────────────────────────────────────────────────────────────
+        //  ZOOM CONTROLS
+        // ──────────────────────────────────────────────────────────────
+        function applyZoom() {
+            const main = document.getElementById('mainContent');
+            if (main) {
+                main.style.transform = `scale(${currentZoom})`;
+            }
+            document.getElementById('zoomLevelDisplay').textContent = Math.round(currentZoom * 100) + '%';
+        }
+
+        function zoomIn() {
+            currentZoom = Math.min(currentZoom + ZOOM_STEP, ZOOM_MAX);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(currentZoom - ZOOM_STEP, ZOOM_MIN);
+            applyZoom();
+        }
 
         // ──────────────────────────────────────────────────────────────
         //  STORAGE
@@ -2514,6 +2594,7 @@
                 el.classList.toggle('active', el.dataset.sort === currentSort);
             });
             document.getElementById('sortLabel').textContent = 'Newest';
+            applyZoom(); // ensure zoom starts at 100%
         });
 
         document.addEventListener('click', function(e) {
