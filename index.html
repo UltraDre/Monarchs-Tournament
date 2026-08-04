@@ -21,6 +21,8 @@
         body {
             width: 100%;
             min-height: 100vh;
+            overflow-y: auto; /* FIX: Enables iOS full-page screenshots */
+            -webkit-overflow-scrolling: touch; /* Ensures smooth scrolling on iOS */
         }
 
         body {
@@ -34,7 +36,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 0 12px;
+            padding: 0 12px 1px 12px; /* FIX: 1px bottom padding forces scrollability */
             -webkit-tap-highlight-color: transparent;
         }
 
