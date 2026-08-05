@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Monarchs Tournament Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
@@ -92,6 +93,7 @@
             width: 100%;
             overflow-x: auto;
             padding: 60px 0 20px 0;
+            min-height: 550px;
         }
 
         .bracket-viewport {
@@ -651,6 +653,26 @@
             color: rgba(255, 255, 255, 0.35);
         }
 
+        /* knockout guard overlay – ensure it's always on top and visible */
+        #knockout-guard-overlay {
+            display: flex !important;
+            z-index: 60;
+            min-height: 400px;
+            background: rgba(13, 15, 26, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 215, 0, 0.08);
+        }
+        #knockout-guard-overlay.hidden {
+            display: none !important;
+        }
+
+        /* bracket container hidden by default when guard is shown */
+        #bracket-container.guarded {
+            display: none !important;
+        }
+
         @media (max-width: 640px) {
             .name-input {
                 width: 90px;
@@ -683,12 +705,15 @@
                 height: 34px;
                 font-size: 10px;
             }
+            #knockout-guard-overlay {
+                min-height: 300px;
+                padding: 20px 16px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- MAIN APP -->
     <div id="app" class="flex flex-col min-h-screen">
 
         <!-- STICKY CONTROLS -->
@@ -933,18 +958,22 @@
 
             <!-- KNOCKOUT (SPLIT SYMMETRICAL INWARD BRACKET) -->
             <main id="tab-view-knockout" class="hidden flex-grow w-full flex items-start justify-center bracket-wrapper">
-                <div id="knockout-guard-overlay" class="absolute inset-0 z-40 bg-[#0d0f1a]/95 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
+                <!-- GUARD OVERLAY – visible for group-stage tournaments without knockout rounds -->
+                <div id="knockout-guard-overlay" class="absolute inset-0 z-40 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
                     <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
                         <i class="fa-solid fa-lock"></i>
                     </div>
                     <h3 class="text-lg font-black uppercase text-white tracking-wider">Knockout Stage Locked</h3>
                     <p class="text-xs text-gray-400 max-w-md">Complete Group Matches and click "Generate Knockout Phase" to seed the top qualifying contenders into the final elimination bracket.</p>
-                    <button onclick="advanceGroupQualifiers()" class="gradient-btn px-6 py-2.5 rounded-full text-xs font-black tracking-wider uppercase flex items-center gap-1.5"><i class="fa-solid fa-forward-fast"></i> Seed Knockout Stage Now</button>
+                    <button onclick="advanceGroupQualifiers()" class="gradient-btn px-6 py-2.5 rounded-full text-xs font-black tracking-wider uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-forward-fast"></i> Seed Knockout Stage Now
+                    </button>
                 </div>
-                <div id="bracket-container" class="relative w-full max-w-full">
+
+                <!-- BRACKET CONTAINER – hidden when guard is shown -->
+                <div id="bracket-container" class="relative w-full max-w-full guarded">
                     <svg id="connector-svg"></svg>
                     <div id="bracket-viewport" class="bracket-viewport">
-                        <!-- Floating Champion Box -->
                         <div id="floating-champion-box">
                             <svg class="trophy-svg" width="44" height="44" viewBox="0 0 100 100" fill="none">
                                 <rect x="32" y="78" width="36" height="10" rx="3" fill="#151928" stroke="#8e7323" stroke-width="2"/>
@@ -1010,7 +1039,11 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             loadTournamentsFromStorage();
-            window.addEventListener('resize', updateConnectors);
+            window.addEventListener('resize', () => {
+                if (activeTournamentId && currentWorkspaceTab === 'knockout') {
+                    updateConnectors();
+                }
+            });
         });
 
         function loadTournamentsFromStorage() {
@@ -1103,6 +1136,9 @@
             const btnKnockout = document.getElementById('tab-knockout');
             [btnGroups, btnFixtures, btnKnockout].forEach(btn => btn.classList.remove('active'));
 
+            const guard = document.getElementById('knockout-guard-overlay');
+            const container = document.getElementById('bracket-container');
+
             if (tab === 'groups') {
                 document.getElementById('tab-view-groups').classList.remove('hidden');
                 btnGroups.classList.add('active');
@@ -1112,15 +1148,23 @@
                 btnFixtures.classList.add('active');
                 renderActiveFixturesGrid();
             } else if (tab === 'knockout') {
-                document.getElementById('tab-view-[#knockout]').classList?.remove('hidden');
                 document.getElementById('tab-view-knockout').classList.remove('hidden');
                 btnKnockout.classList.add('active');
-                const guard = document.getElementById('knockout-guard-overlay');
-                if (t.rounds && t.rounds.length > 0) {
+
+                // Determine if knockout rounds exist
+                const hasRounds = t.rounds && t.rounds.length > 0;
+
+                if (hasRounds) {
+                    // Show bracket, hide guard
                     guard.classList.add('hidden');
+                    container.classList.remove('guarded');
                     renderActiveBracket();
                 } else {
+                    // Show guard, hide bracket
                     guard.classList.remove('hidden');
+                    container.classList.add('guarded');
+                    // Ensure guard is visible and centered
+                    guard.style.display = 'flex';
                 }
             }
         }
@@ -1130,7 +1174,20 @@
             if (currentWorkspaceTab === 'groups') renderActiveGroupStandings();
             else if (currentWorkspaceTab === 'fixtures') renderActiveFixturesGrid();
             else if (currentWorkspaceTab === 'knockout') {
-                renderActiveBracket();
+                const t = tournaments.find(x => x.id === activeTournamentId);
+                if (!t) return;
+                const hasRounds = t.rounds && t.rounds.length > 0;
+                const guard = document.getElementById('knockout-guard-overlay');
+                const container = document.getElementById('bracket-container');
+                if (hasRounds) {
+                    guard.classList.add('hidden');
+                    container.classList.remove('guarded');
+                    renderActiveBracket();
+                } else {
+                    guard.classList.remove('hidden');
+                    container.classList.add('guarded');
+                    guard.style.display = 'flex';
+                }
             }
         }
 
@@ -1362,6 +1419,7 @@
                 const seedList = currentFormDist === 'random' ? [...rawLines].sort(() => 0.5 - Math.random()) : [...rawLines];
                 newTournament.groupSettings = { groupSize: sizeVal, qualifiersPerGroup: qualifiersVal };
                 newTournament.groups = buildBalancedGroupFixtures(seedList, sizeVal);
+                // No rounds yet – will be generated via advanceGroupQualifiers()
             }
             tournaments.push(newTournament);
             saveTournamentsToStorage();
@@ -1423,11 +1481,21 @@
                 document.getElementById('active-nav-tabs').classList.add('hidden');
                 hideWorkspaceViews();
                 document.getElementById('tab-view-knockout').classList.remove('hidden');
-                document.getElementById('knockout-guard-overlay').classList.add('hidden');
+                // For direct knockout, guard is hidden, bracket is shown
+                const guard = document.getElementById('knockout-guard-overlay');
+                const container = document.getElementById('bracket-container');
+                guard.classList.add('hidden');
+                container.classList.remove('guarded');
                 renderActiveBracket();
                 currentWorkspaceTab = 'knockout';
             } else {
                 document.getElementById('active-nav-tabs').classList.remove('hidden');
+                // Ensure guard is visible initially (no rounds yet)
+                const guard = document.getElementById('knockout-guard-overlay');
+                const container = document.getElementById('bracket-container');
+                guard.classList.remove('hidden');
+                container.classList.add('guarded');
+                guard.style.display = 'flex';
                 switchActiveTab('groups');
             }
         }
@@ -1614,7 +1682,15 @@
 
         function renderActiveBracket() {
             const t = tournaments.find(x => x.id === activeTournamentId);
-            if (!t || !t.rounds) return;
+            if (!t || !t.rounds) {
+                // No rounds: show guard, hide bracket
+                const guard = document.getElementById('knockout-guard-overlay');
+                const container = document.getElementById('bracket-container');
+                guard.classList.remove('hidden');
+                container.classList.add('guarded');
+                guard.style.display = 'flex';
+                return;
+            }
             const viewport = document.getElementById('bracket-viewport');
             const championBox = document.getElementById('floating-champion-box');
             viewport.innerHTML = '';
@@ -1716,6 +1792,7 @@
                 viewport.appendChild(col);
             });
 
+            // Ensure champion box is properly positioned
             updateFloatingChampion();
             requestAnimationFrame(() => updateConnectors());
         }
@@ -1746,10 +1823,7 @@
                 const rectRight = rightFinalSlot.getBoundingClientRect();
                 const containerRect = document.getElementById('bracket-container').getBoundingClientRect();
 
-                // Center horizontally between the two final slots
                 const centerX = (rectLeft.right + rectRight.left) / 2 - containerRect.left;
-                
-                // Positioned champion box elevated significantly higher above the finalists (-210px desktop, -150px mobile)
                 const offsetY = window.innerWidth < 640 ? 150 : 210;
                 const topY = rectLeft.top - containerRect.top - offsetY;
 
@@ -1772,7 +1846,7 @@
         function updateConnectors() {
             const svg = document.getElementById('connector-svg');
             const container = document.getElementById('bracket-container');
-            if (!svg || !container) return;
+            if (!svg || !container || container.classList.contains('guarded')) return;
 
             const rect = container.getBoundingClientRect();
             svg.setAttribute('width', rect.width);
@@ -1876,6 +1950,7 @@
             const t = tournaments.find(x => x.id === activeTournamentId);
             if (!t || !t.groups) return;
 
+            // Check for empty scores
             let unplayed = false;
             t.groups.forEach(group => {
                 group.matches.forEach(m => { if (m.homeScore === "" || m.awayScore === "") unplayed = true; });
@@ -1954,7 +2029,14 @@
             t.rounds = rounds;
             t.champion = "";
             saveTournamentsToStorage();
+
+            // Switch to knockout tab and show bracket
+            const guard = document.getElementById('knockout-guard-overlay');
+            const container = document.getElementById('bracket-container');
+            guard.classList.add('hidden');
+            container.classList.remove('guarded');
             switchActiveTab('knockout');
+            renderActiveBracket();
         }
 
         function celebrate() {
