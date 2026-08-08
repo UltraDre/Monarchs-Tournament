@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Monarchs Tournament Engine</title>
-    <script src="https://cdn.tailwindcss.com">
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -102,7 +104,6 @@
             align-items: stretch;
             justify-content: center;
             gap: 48px;
-            /* significantly increased gap for more breathing room */
             min-width: 700px;
             min-height: 750px;
             position: relative;
@@ -654,7 +655,6 @@
             color: rgba(255, 255, 255, 0.35);
         }
 
-        /* knockout guard overlay – ensure it's always on top and visible */
         #knockout-guard-overlay {
             display: flex !important;
             z-index: 60;
@@ -669,7 +669,6 @@
             display: none !important;
         }
 
-        /* bracket container hidden by default when guard is shown */
         #bracket-container.guarded {
             display: none !important;
         }
@@ -689,7 +688,6 @@
             .bracket-viewport {
                 min-width: 460px;
                 gap: 28px;
-                /* increased mobile gap for more breathing room */
             }
             .bracket-col {
                 flex: 0 1 95px;
@@ -739,6 +737,14 @@
             </div>
 
             <div id="view-actions" class="right-buttons hidden">
+                <!-- Cloud upload / load -->
+                <button onclick="uploadToCloud()" class="icon-btn amber" title="Upload to Cloud">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </button>
+                <button onclick="loadFromCloud()" class="icon-btn blue" title="Load from Cloud">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                </button>
+
                 <button onclick="downloadBackup()" class="icon-btn green" title="Download Backup">
                     <i class="fa-solid fa-download"></i>
                 </button>
@@ -959,9 +965,8 @@
                 <div id="fixtures-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
             </main>
 
-            <!-- KNOCKOUT (SPLIT SYMMETRICAL INWARD BRACKET) -->
+            <!-- KNOCKOUT -->
             <main id="tab-view-knockout" class="hidden flex-grow w-full flex items-start justify-center bracket-wrapper">
-                <!-- GUARD OVERLAY – visible for group-stage tournaments without knockout rounds -->
                 <div id="knockout-guard-overlay" class="absolute inset-0 z-40 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
                     <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
                         <i class="fa-solid fa-lock"></i>
@@ -973,7 +978,6 @@
                     </button>
                 </div>
 
-                <!-- BRACKET CONTAINER – hidden when guard is shown -->
                 <div id="bracket-container" class="relative w-full max-w-full guarded">
                     <svg id="connector-svg"></svg>
                     <div id="bracket-viewport" class="bracket-viewport">
@@ -1021,6 +1025,16 @@
     <canvas id="confetti-canvas"></canvas>
 
     <script>
+        // ============================================================
+        //  SUPABASE CONFIGURATION – replace with your own values
+        // ============================================================
+        const SUPABASE_URL = 'https://hbvpnslzoulogjivoipv.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_UTf_89tttlvxQ0N4JAqQaw_iXl7ocpm';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================================
+        //  EXISTING CODE (all original variables & functions)
+        // ============================================================
         let tournaments = [];
         let activeTournamentId = null;
         let currentFormFormat = 'group';
@@ -2111,6 +2125,67 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        // ============================================================
+        //  NEW SUPABASE FUNCTIONS (Upload / Load)
+        // ============================================================
+        async function uploadToCloud() {
+            if (tournaments.length === 0) {
+                alert('No tournaments to upload.');
+                return;
+            }
+
+            const username = prompt('Enter your username:');
+            if (!username) return;
+            const accessCode = prompt('Enter your access code:');
+            if (!accessCode) return;
+
+            try {
+                const { error } = await supabaseClient.rpc('upload_backup', {
+                    p_username: username,
+                    p_access_code: accessCode,
+                    p_data: tournaments
+                });
+
+                if (error) {
+                    console.error('Upload error:', error);
+                    alert('Upload failed: ' + error.message);
+                } else {
+                    alert('Tournaments successfully uploaded to cloud!');
+                }
+            } catch (err) {
+                alert('Network error: ' + err.message);
+            }
+        }
+
+        async function loadFromCloud() {
+            const username = prompt('Enter the username whose backup you want to load:');
+            if (!username) return;
+
+            try {
+                const { data, error } = await supabaseClient.rpc('get_backup', {
+                    p_username: username
+                });
+
+                if (error) {
+                    console.error('Load error:', error);
+                    alert('Load failed: ' + error.message);
+                    return;
+                }
+
+                if (!data) {
+                    alert('No backup found for this username.');
+                    return;
+                }
+
+                tournaments = data;
+                saveTournamentsToStorage();
+                goHome();
+                alert('Tournaments loaded successfully!');
+            } catch (err) {
+                alert('Network error: ' + err.message);
+            }
         }
     </script>
 </body>
