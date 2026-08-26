@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Monarchs Tournament Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -164,7 +166,7 @@
             padding: 0 10px;
             font-size: 10px;
             font-weight: 800;
-            text-transform: uppercase;
+            /* removed text-transform: uppercase; — keep user's case */
             letter-spacing: 0.02em;
             background: #ffffff;
             color: #0d0f1a;
@@ -191,6 +193,7 @@
         .name-input::placeholder {
             color: #888888;
             font-weight: 700;
+            /* no transform */
         }
         .name-input:hover {
             filter: brightness(0.92);
@@ -292,7 +295,7 @@
             box-shadow: 0 0 25px rgba(229, 193, 34, 0.25);
             cursor: default;
             outline: none;
-            text-transform: uppercase;
+            /* removed text-transform: uppercase; — keep user's case */
             padding: 0 10px;
         }
 
@@ -366,14 +369,15 @@
             font-size: 11px !important;
         }
 
+        /* ── FIXTURE ROW – reduced sizes ── */
         .fixture-row-modern {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            max-width: 580px;
+            max-width: 520px;
             margin: 0 auto 2px auto;
-            padding: 8px 18px;
+            padding: 5px 12px;
             background: rgba(26, 31, 46, 0.75);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -389,14 +393,16 @@
         }
 
         .fixture-modern-name {
-            font-size: 13px;
+            font-size: 11px;
+            /* reduced from 13px */
             font-weight: 800;
             color: #ffffff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 150px;
-            text-transform: uppercase;
+            max-width: 130px;
+            /* slightly tighter */
+            /* removed text-transform: uppercase; — keep user's case */
             text-align: center;
             width: 100%;
         }
@@ -404,20 +410,23 @@
         .fixture-modern-center {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
-            margin: 0 12px;
+            margin: 0 8px;
         }
 
         .fixture-modern-scorebox {
-            width: 60px;
-            height: 48px;
+            width: 44px;
+            /* reduced from 60px */
+            height: 38px;
+            /* reduced from 48px */
             background: #ffd13b;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid rgba(180, 150, 30, 0.25);
             color: #0d0f1a;
             text-align: center;
-            font-size: 24px;
+            font-size: 17px;
+            /* reduced from 24px */
             font-weight: 900;
             outline: none;
             transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
@@ -430,7 +439,8 @@
         }
 
         .fixture-modern-vs {
-            font-size: 12px;
+            font-size: 10px;
+            /* slightly smaller */
             font-weight: 700;
             color: rgba(255, 255, 255, 0.3);
             letter-spacing: 0.1em;
@@ -709,6 +719,28 @@
             #knockout-guard-overlay {
                 min-height: 300px;
                 padding: 20px 16px;
+            }
+
+            /* fixture mobile tweaks */
+            .fixture-row-modern {
+                max-width: 100%;
+                padding: 4px 8px;
+            }
+            .fixture-modern-name {
+                font-size: 9px;
+                max-width: 70px;
+            }
+            .fixture-modern-scorebox {
+                width: 32px;
+                height: 30px;
+                font-size: 13px;
+            }
+            .fixture-modern-center {
+                gap: 4px;
+                margin: 0 4px;
+            }
+            .fixture-modern-vs {
+                font-size: 8px;
             }
         }
     </style>
@@ -1211,11 +1243,11 @@
 
             if (sorted.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-1 md:col-span-2 glass-card p-8 rounded-xl text-center space-y-2">
-                        <p class="text-sm text-gray-400 font-medium">No tournament brackets generated yet.</p>
-                        <button onclick="showCreateView()" class="inline-flex items-center gap-1.5 text-xs text-[#ffd13b] font-bold hover:underline">Create a tournament <i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                `;
+                            <div class="col-span-1 md:col-span-2 glass-card p-8 rounded-xl text-center space-y-2">
+                                <p class="text-sm text-gray-400 font-medium">No tournament brackets generated yet.</p>
+                                <button onclick="showCreateView()" class="inline-flex items-center gap-1.5 text-xs text-[#ffd13b] font-bold hover:underline">Create a tournament <i class="fa-solid fa-arrow-right"></i></button>
+                            </div>
+                        `;
                 return;
             }
 
@@ -1228,24 +1260,24 @@
                     `${t.entrants.length} Entrants · ${t.groups ? t.groups.length : 0} Groups · Group & Knockout`;
                 const dateStr = t.createdAt ? new Date(t.createdAt).toLocaleDateString() : '';
                 card.innerHTML = `
-                    <div class="space-y-1.5 mb-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[9px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider ${t.format === 'knockout' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">
-                                ${t.format === 'knockout' ? 'Knockout' : 'Groups + KO'}
-                            </span>
-                            <div class="flex items-center gap-2">
-                                <button onclick="openEditPlayersModal('${t.id}', event)" class="text-gray-400 hover:text-[#ffd13b] p-1.5 transition" title="Edit Players"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteTournament('${t.id}', event)" class="text-gray-400 hover:text-rose-400 p-1.5 transition" title="Delete Tournament"><i class="fa-solid fa-trash-can"></i></button>
+                            <div class="space-y-1.5 mb-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[9px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider ${t.format === 'knockout' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">
+                                        ${t.format === 'knockout' ? 'Knockout' : 'Groups + KO'}
+                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="openEditPlayersModal('${t.id}', event)" class="text-gray-400 hover:text-[#ffd13b] p-1.5 transition" title="Edit Players"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button onclick="deleteTournament('${t.id}', event)" class="text-gray-400 hover:text-rose-400 p-1.5 transition" title="Delete Tournament"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </div>
+                                <h4 class="text-sm font-black text-white uppercase tracking-wide truncate max-w-[250px]">${t.name}</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${statsText}</p>
+                                ${dateStr ? `<p class="text-[9px] text-gray-500 font-medium">${dateStr}</p>` : ''}
                             </div>
-                        </div>
-                        <h4 class="text-sm font-black text-white uppercase tracking-wide truncate max-w-[250px]">${t.name}</h4>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${statsText}</p>
-                        ${dateStr ? `<p class="text-[9px] text-gray-500 font-medium">${dateStr}</p>` : ''}
-                    </div>
-                    <button onclick="launchTournament('${t.id}')" class="w-full py-2.5 rounded-lg secondary-btn text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-circle-play text-xs text-[#ffd13b]"></i> Launch Match
-                    </button>
-                `;
+                            <button onclick="launchTournament('${t.id}')" class="w-full py-2.5 rounded-lg secondary-btn text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-circle-play text-xs text-[#ffd13b]"></i> Launch Match
+                            </button>
+                        `;
                 grid.appendChild(card);
             });
         }
@@ -1269,9 +1301,9 @@
                 const div = document.createElement('div');
                 div.className = "flex items-center gap-3";
                 div.innerHTML = `
-                    <span class="text-xs font-black text-gray-500 w-8 text-right">#${index+1}</span>
-                    <input type="text" value="${entrant}" class="flex-grow px-3 py-2 rounded bg-[#0b0e1a] border border-white/10 text-white font-semibold text-xs tracking-wide focus:outline-none focus:border-[#ffd13b]" data-index="${index}" />
-                `;
+                            <span class="text-xs font-black text-gray-500 w-8 text-right">#${index+1}</span>
+                            <input type="text" value="${entrant}" class="flex-grow px-3 py-2 rounded bg-[#0b0e1a] border border-white/10 text-white font-semibold text-xs tracking-wide focus:outline-none focus:border-[#ffd13b]" data-index="${index}" />
+                        `;
                 container.appendChild(div);
             });
             document.getElementById('edit-players-modal').classList.remove('hidden');
@@ -1364,7 +1396,8 @@
         }
 
         function updateContendersCount() {
-            const lines = document.getElementById('form-contenders').value.split('\n').map(l => l.trim()).filter(l => l !== "");
+            const lines = document.getElementById('form-contenders').value.split('\n').map(l => l.trim()).filter(l => l !==
+            "");
             const req = getRequiredEntrantCount();
             const counter = document.getElementById('contenders-counter');
             counter.innerText = `${lines.length} / ${req} Contenders`;
@@ -1413,13 +1446,14 @@
         function handleCreateTournament() {
             const name = document.getElementById('form-name').value.trim() || "MONARCHS CL 3B";
             const req = getRequiredEntrantCount();
-            let rawLines = document.getElementById('form-contenders').value.split('\n').map(l => l.trim()).filter(l => l !== "");
+            let rawLines = document.getElementById('form-contenders').value.split('\n').map(l => l.trim()).filter(l => l !==
+            "");
             while (rawLines.length < req) rawLines.push(`Contender ${rawLines.length+1}`);
             if (rawLines.length > req) rawLines = rawLines.slice(0, req);
 
             const id = 'tour-' + Date.now();
             let newTournament = { id, name, format: currentFormFormat, entrants: [...rawLines],
-            createdAt: new Date().toISOString() };
+                createdAt: new Date().toISOString() };
 
             if (currentFormFormat === 'knockout') {
                 let orderedLines = [...rawLines];
@@ -1524,40 +1558,40 @@
                     const isQual = pos < t.groupSettings.qualifiersPerGroup;
                     const badge = isQual ? 'bg-[#27ae60]' : 'bg-[#e74c3c]';
                     rows += `
-                        <tr class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-all font-bold text-gray-300">
-                            <td class="py-2 text-center"><span class="inline-block w-5 py-0.5 rounded text-white font-black text-[9px] ${badge}">${pos+1}</span></td>
-                            <td class="py-2 font-semibold text-white tracking-wide truncate max-w-[130px]">${s.team}</td>
-                            <td class="py-2 text-center text-gray-400">${s.played}</td>
-                            <td class="py-2 text-center text-gray-400">${s.wins}</td>
-                            <td class="py-2 text-center text-gray-400">${s.draws}</td>
-                            <td class="py-2 text-center text-gray-400">${s.losses}</td>
-                            <td class="py-2 text-center text-gray-400">${s.gf}</td>
-                            <td class="py-2 text-center text-gray-400">${s.ga}</td>
-                            <td class="py-2 text-center text-blue-400">${s.gd>0?'+':''}${s.gd}</td>
-                            <td class="py-2 text-center font-black text-[#ffd13b]">${s.pts}</td>
-                        </tr>
-                    `;
+                                <tr class="border-b border-white/5 last:border-0 hover:bg-white/5 transition-all font-bold text-gray-300">
+                                    <td class="py-2 text-center"><span class="inline-block w-5 py-0.5 rounded text-white font-black text-[9px] ${badge}">${pos+1}</span></td>
+                                    <td class="py-2 font-semibold text-white tracking-wide truncate max-w-[130px]">${s.team}</td>
+                                    <td class="py-2 text-center text-gray-400">${s.played}</td>
+                                    <td class="py-2 text-center text-gray-400">${s.wins}</td>
+                                    <td class="py-2 text-center text-gray-400">${s.draws}</td>
+                                    <td class="py-2 text-center text-gray-400">${s.losses}</td>
+                                    <td class="py-2 text-center text-gray-400">${s.gf}</td>
+                                    <td class="py-2 text-center text-gray-400">${s.ga}</td>
+                                    <td class="py-2 text-center text-blue-400">${s.gd>0?'+':''}${s.gd}</td>
+                                    <td class="py-2 text-center font-black text-[#ffd13b]">${s.pts}</td>
+                                </tr>
+                            `;
                 });
                 card.innerHTML = `
-                    <div class="border-b border-white/5 pb-2"><h3 class="text-xs font-black text-[#ffd13b] tracking-[0.2em] uppercase text-center">${group.name}</h3></div>
-                    <div class="w-full">
-                        <table class="w-full text-left border-collapse table-fixed">
-                            <thead><tr class="font-black text-gray-400 tracking-wider uppercase border-b border-white/5">
-                                <th class="py-2 text-center w-[10%]">S/N</th>
-                                <th class="py-2 text-left w-[30%]">Team</th>
-                                <th class="py-2 text-center w-[7%]">MP</th>
-                                <th class="py-2 text-center w-[7%]">W</th>
-                                <th class="py-2 text-center w-[7%]">D</th>
-                                <th class="py-2 text-center w-[7%]">L</th>
-                                <th class="py-2 text-center w-[7%]">GF</th>
-                                <th class="py-2 text-center w-[7%]">GA</th>
-                                <th class="py-2 text-center w-[8%]">GD</th>
-                                <th class="py-2 text-center w-[10%]">Pts</th>
-                            </tr></thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                `;
+                            <div class="border-b border-white/5 pb-2"><h3 class="text-xs font-black text-[#ffd13b] tracking-[0.2em] uppercase text-center">${group.name}</h3></div>
+                            <div class="w-full">
+                                <table class="w-full text-left border-collapse table-fixed">
+                                    <thead><tr class="font-black text-gray-400 tracking-wider uppercase border-b border-white/5">
+                                        <th class="py-2 text-center w-[10%]">S/N</th>
+                                        <th class="py-2 text-left w-[30%]">Team</th>
+                                        <th class="py-2 text-center w-[7%]">MP</th>
+                                        <th class="py-2 text-center w-[7%]">W</th>
+                                        <th class="py-2 text-center w-[7%]">D</th>
+                                        <th class="py-2 text-center w-[7%]">L</th>
+                                        <th class="py-2 text-center w-[7%]">GF</th>
+                                        <th class="py-2 text-center w-[7%]">GA</th>
+                                        <th class="py-2 text-center w-[8%]">GD</th>
+                                        <th class="py-2 text-center w-[10%]">Pts</th>
+                                    </tr></thead>
+                                    <tbody>${rows}</tbody>
+                                </table>
+                            </div>
+                        `;
                 grid.appendChild(card);
             });
         }
@@ -1601,21 +1635,21 @@
                 let html = '';
                 group.matches.forEach(m => {
                     html += `
-                        <div class="fixture-row-modern" data-match-id="${m.id}">
-                            <div class="fixture-modern-left"><div class="fixture-modern-name" title="${m.home}">${m.home}</div></div>
-                            <div class="fixture-modern-center">
-                                <input type="text" inputmode="numeric" value="${m.homeScore??''}" class="fixture-modern-scorebox" data-match="${m.id}" data-side="home" />
-                                <div class="fixture-modern-vs">VS</div>
-                                <input type="text" inputmode="numeric" value="${m.awayScore??''}" class="fixture-modern-scorebox" data-match="${m.id}" data-side="away" />
-                            </div>
-                            <div class="fixture-modern-right"><div class="fixture-modern-name" title="${m.away}">${m.away}</div></div>
-                        </div>
-                    `;
+                                <div class="fixture-row-modern" data-match-id="${m.id}">
+                                    <div class="fixture-modern-left"><div class="fixture-modern-name" title="${m.home}">${m.home}</div></div>
+                                    <div class="fixture-modern-center">
+                                        <input type="text" inputmode="numeric" value="${m.homeScore??''}" class="fixture-modern-scorebox" data-match="${m.id}" data-side="home" />
+                                        <div class="fixture-modern-vs">VS</div>
+                                        <input type="text" inputmode="numeric" value="${m.awayScore??''}" class="fixture-modern-scorebox" data-match="${m.id}" data-side="away" />
+                                    </div>
+                                    <div class="fixture-modern-right"><div class="fixture-modern-name" title="${m.away}">${m.away}</div></div>
+                                </div>
+                            `;
                 });
                 container.innerHTML = `
-                    <div class="border-b border-white/5 pb-2 mb-2"><h3 class="text-xs font-black text-gray-300 tracking-[0.25em] uppercase">${group.name}</h3></div>
-                    <div class="flex flex-col gap-2">${html}</div>
-                `;
+                            <div class="border-b border-white/5 pb-2 mb-2"><h3 class="text-xs font-black text-gray-300 tracking-[0.25em] uppercase">${group.name}</h3></div>
+                            <div class="flex flex-col gap-2">${html}</div>
+                        `;
                 grid.appendChild(container);
 
                 container.querySelectorAll('.fixture-modern-scorebox').forEach(inp => {
@@ -1882,8 +1916,10 @@
                     const isLeftSide = idxA < (slots.length / 2);
                     const sideStr = isLeftSide ? 'left' : 'right';
 
-                    const slotAEl = document.querySelector(`[data-round="${r}"][data-slot="${idxA}"][data-side="${sideStr}"]`);
-                    const slotBEl = document.querySelector(`[data-round="${r}"][data-slot="${idxB}"][data-side="${sideStr}"]`);
+                    const slotAEl = document.querySelector(
+                        `[data-round="${r}"][data-slot="${idxA}"][data-side="${sideStr}"]`);
+                    const slotBEl = document.querySelector(
+                        `[data-round="${r}"][data-slot="${idxB}"][data-side="${sideStr}"]`);
                     const targetEl = document.querySelector(
                         `[data-round="${r+1}"][data-slot="${targetIdx}"][data-side="${sideStr}"]`);
 
@@ -1924,16 +1960,16 @@
                     const winW = 3;
                     const normW = 1.5;
 
-                    addConnectorPath(svg, `M ${xA} ${yA} H ${mergeX}`, isAWinner ? winColor : normColor, isAWinner ? winW :
-                        normW, isAWinner);
-                    addConnectorPath(svg, `M ${xB} ${yB} H ${mergeX}`, isBWinner ? winColor : normColor, isBWinner ? winW :
-                        normW, isBWinner);
+                    addConnectorPath(svg, `M ${xA} ${yA} H ${mergeX}`, isAWinner ? winColor : normColor, isAWinner ?
+                        winW : normW, isAWinner);
+                    addConnectorPath(svg, `M ${xB} ${yB} H ${mergeX}`, isBWinner ? winColor : normColor, isBWinner ?
+                        winW : normW, isBWinner);
                     const topY = Math.min(yA, yB);
                     const botY = Math.max(yA, yB);
                     addConnectorPath(svg, `M ${mergeX} ${topY} V ${botY}`, isWinner ? winColor : normColor, isWinner ?
                         winW : normW, isWinner);
-                    addConnectorPath(svg, `M ${mergeX} ${midY} H ${xT}`, isWinner ? winColor : normColor, isWinner ? winW :
-                        normW, isWinner);
+                    addConnectorPath(svg, `M ${mergeX} ${midY} H ${xT}`, isWinner ? winColor : normColor, isWinner ?
+                        winW : normW, isWinner);
                 }
             }
         }
