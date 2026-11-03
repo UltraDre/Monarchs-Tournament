@@ -1,4 +1,4 @@
-const CACHE = 'monarchs-v2';
+const CACHE = 'monarchs-v3';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest',
   './assets/tailwind.css', './assets/fontawesome.min.css', './assets/supabase.js',

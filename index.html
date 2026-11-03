@@ -103,6 +103,29 @@
             min-height: 550px;
         }
 
+        .bracket-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 12px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+        .bracket-toolbar button {
+            padding: 8px 14px;
+            border-radius: 9999px;
+            font-weight: 700;
+        }
+        .bracket-stage {
+            flex: 0 0 auto;
+            width: max-content;
+            min-width: 100%;
+        }
+        .bracket-stage.fit { overflow: hidden; }
+        #bracket-container { transform-origin: top left; }
+
         /* Grow with the bracket so neither side overflows past the scroll origin. */
         #bracket-container {
             flex: 0 0 auto;
@@ -1009,7 +1032,12 @@
             </main>
 
             <!-- KNOCKOUT -->
-            <main id="tab-view-knockout" class="hidden flex-grow w-full flex items-start justify-center bracket-wrapper">
+            <main id="tab-view-knockout" class="hidden flex-grow w-full">
+                <div class="bracket-toolbar" id="bracket-toolbar">
+                    <button type="button" id="bracket-view-toggle" class="secondary-btn" onclick="toggleBracketFit()" aria-pressed="false">Fit bracket for screenshot</button>
+                    <span id="bracket-view-hint">Scroll sideways to see the full bracket.</span>
+                </div>
+                <div id="bracket-scroll" class="flex items-start bracket-wrapper">
                 <div id="knockout-guard-overlay" class="absolute inset-0 z-40 flex flex-col items-center justify-center text-center p-6 gap-4 rounded-2xl">
                     <div class="w-16 h-16 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-2xl">
                         <i class="fa-solid fa-lock"></i>
@@ -1021,6 +1049,7 @@
                     </button>
                 </div>
 
+                <div id="bracket-stage" class="bracket-stage">
                 <div id="bracket-container" class="relative w-full max-w-full guarded">
                     <svg id="connector-svg"></svg>
                     <div id="bracket-viewport" class="bracket-viewport">
@@ -1038,6 +1067,8 @@
                             <input type="text" id="champion-name-input" class="champion-name-input" readonly placeholder="CROWN CHAMPION" />
                         </div>
                     </div>
+                </div>
+                </div>
                 </div>
             </main>
 
@@ -1084,6 +1115,8 @@
         let currentFormDist = 'random';
         let currentWorkspaceTab = 'groups';
         let editingTournamentId = null;
+        let bracketFit = window.matchMedia('(max-width: 640px)').matches;
+        let bracketScale = 1;
         let currentSort = 'date-desc';
         let sortMenuOpen = false;
 
@@ -1101,7 +1134,7 @@
             loadTournamentsFromStorage();
             window.addEventListener('resize', () => {
                 if (activeTournamentId && currentWorkspaceTab === 'knockout') {
-                    updateConnectors();
+                    layoutBracket();
                 }
             });
         });
@@ -1846,8 +1879,42 @@
                 viewport.appendChild(col);
             });
 
-            updateFloatingChampion();
-            requestAnimationFrame(() => updateConnectors());
+            requestAnimationFrame(() => layoutBracket());
+        }
+
+        function toggleBracketFit() {
+            bracketFit = !bracketFit;
+            layoutBracket();
+        }
+
+        function layoutBracket() {
+            const container = document.getElementById('bracket-container');
+            const stage = document.getElementById('bracket-stage');
+            const scroll = document.getElementById('bracket-scroll');
+            const toggle = document.getElementById('bracket-view-toggle');
+            const hint = document.getElementById('bracket-view-hint');
+            toggle.textContent = bracketFit ? 'Full size for editing' : 'Fit bracket for screenshot';
+            toggle.setAttribute('aria-pressed', String(bracketFit));
+            hint.textContent = bracketFit ? 'Entire bracket fits on screen for a full-page screenshot.' : 'Scroll sideways to see the full bracket.';
+            if (container.classList.contains('guarded')) return;
+
+            // Measure the unscaled bracket before fitting it to the visible page width.
+            stage.classList.remove('fit');
+            stage.style.width = '';
+            stage.style.height = '';
+            container.style.transform = '';
+            bracketScale = 1;
+            const naturalWidth = container.offsetWidth;
+            const naturalHeight = container.offsetHeight;
+            if (bracketFit && naturalWidth > scroll.clientWidth) {
+                bracketScale = scroll.clientWidth / naturalWidth;
+                stage.style.width = scroll.clientWidth + 'px';
+                stage.style.height = Math.ceil(naturalHeight * bracketScale) + 'px';
+                stage.classList.add('fit');
+                container.style.transform = `scale(${bracketScale})`;
+                scroll.scrollLeft = 0;
+            }
+            updateConnectors();
         }
 
         function updateFloatingChampion() {
@@ -1876,9 +1943,9 @@
                 const rectRight = rightFinalSlot.getBoundingClientRect();
                 const containerRect = document.getElementById('bracket-container').getBoundingClientRect();
 
-                const centerX = (rectLeft.right + rectRight.left) / 2 - containerRect.left;
+                const centerX = ((rectLeft.right + rectRight.left) / 2 - containerRect.left) / bracketScale;
                 const offsetY = window.innerWidth < 640 ? 130 : 180;
-                const topY = rectLeft.top - containerRect.top - offsetY;
+                const topY = (rectLeft.top - containerRect.top) / bracketScale - offsetY;
 
                 championBox.style.left = centerX + 'px';
                 championBox.style.top = topY + 'px';
@@ -1902,9 +1969,9 @@
             if (!svg || !container || container.classList.contains('guarded')) return;
 
             const rect = container.getBoundingClientRect();
-            svg.setAttribute('width', rect.width);
-            svg.setAttribute('height', rect.height);
-            svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+            svg.setAttribute('width', rect.width / bracketScale);
+            svg.setAttribute('height', rect.height / bracketScale);
+            svg.setAttribute('viewBox', `0 0 ${rect.width / bracketScale} ${rect.height / bracketScale}`);
             svg.innerHTML = '';
 
             const t = tournaments.find(x => x.id === activeTournamentId);
@@ -1942,18 +2009,18 @@
 
                     let xA, xB, xT;
                     if (isLeftSide) {
-                        xA = rA.right - rect.left + 4;
-                        xB = rB.right - rect.left + 4;
-                        xT = rT.left - rect.left - 4;
+                        xA = (rA.right - rect.left) / bracketScale + 4;
+                        xB = (rB.right - rect.left) / bracketScale + 4;
+                        xT = (rT.left - rect.left) / bracketScale - 4;
                     } else {
-                        xA = rA.left - rect.left - 4;
-                        xB = rB.left - rect.left - 4;
-                        xT = rT.right - rect.left + 4;
+                        xA = (rA.left - rect.left) / bracketScale - 4;
+                        xB = (rB.left - rect.left) / bracketScale - 4;
+                        xT = (rT.right - rect.left) / bracketScale + 4;
                     }
 
-                    const yA = rA.top + rA.height / 2 - rect.top;
-                    const yB = rB.top + rB.height / 2 - rect.top;
-                    const yT = rT.top + rT.height / 2 - rect.top;
+                    const yA = (rA.top + rA.height / 2 - rect.top) / bracketScale;
+                    const yB = (rB.top + rB.height / 2 - rect.top) / bracketScale;
+                    const yT = (rT.top + rT.height / 2 - rect.top) / bracketScale;
 
                     const slotA = slots[idxA];
                     const slotB = slots[idxB];

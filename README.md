@@ -59,6 +59,7 @@ A powerful, fully client‑side tournament management tool for group stages and 
 - Enter leg scores in the tiny score inputs (for two‑leg ties).
 - The winner advances automatically to the next round.
 - When a champion is crowned, confetti rains down!
+- On phones, the bracket starts in a fit-to-screen view so a full-page screenshot includes both sides. Tap **Full size for editing** to enter scores comfortably; use **Fit bracket for screenshot** to switch back.
 
 ### 4. Edit Players
 - On the home page, hover over a tournament card and click the **pencil icon**.
