@@ -29,6 +29,12 @@
             min-height: 100vh;
         }
 
+        html {
+            /* Stop iOS/Android inflating text in landscape (looks like a zoom). */
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: #0d0f1a;
@@ -718,28 +724,69 @@
             display: none !important;
         }
 
-        @media (max-width: 640px) {
+        /* ── NO-ZOOM INPUTS ──
+           Mobile browsers zoom the page whenever a text field they focus has a
+           computed font-size under 16px, and a quick double-tap on a field can
+           zoom too. Every field in this app was styled well below that (8-13px),
+           so on small screens the fields get a real 16px font size instead.
+           Nothing is scaled or hidden, and no user-scalable / maximum-scale hack
+           is used: pinch-to-zoom for accessibility keeps working. Desktop keeps
+           its original compact sizes. */
+        input,
+        select,
+        textarea {
+            /* disables double-tap-to-zoom on the field itself */
+            touch-action: manipulation;
+        }
+
+        @media (max-width: 900px) {
+            /* !important so no smaller utility class (text-xs, text-sm, ...)
+               can put a field back under the 16px auto-zoom threshold */
+            input,
+            select,
+            textarea,
+            .name-input,
+            .score-input,
+            .fixture-modern-scorebox,
+            .input-dark,
+            #floating-champion-box .champion-name-input,
+            #edit-players-inputs input {
+                font-size: 16px !important;
+            }
+
+            /* 16px text needs a little more room in the narrow bracket fields. */
+            .score-input {
+                width: 30px;
+                letter-spacing: -0.02em;
+            }
             .name-input {
-                width: 80px;
-                height: 28px;
-                font-size: 8px;
-                padding: 0 5px;
+                letter-spacing: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            /* 16px text needs a slightly wider column: 90 + 24 + 24 = 138px */
+            .name-input {
+                width: 90px;
+                height: 30px;
+                padding: 0 6px;
             }
             .score-input {
-                width: 22px;
-                height: 28px;
-                font-size: 9px;
+                width: 24px;
+                height: 30px;
+                padding: 0;
+                letter-spacing: -0.04em;
             }
             .bracket-viewport {
                 gap: 28px;
             }
             .bracket-col {
-                flex: 0 0 128px;
-                min-width: 128px;
+                flex: 0 0 148px;
+                min-width: 148px;
                 padding: 0 2px;
             }
             #floating-champion-box {
-                width: 130px;
+                width: 152px;
                 padding: 8px 10px;
             }
             #floating-champion-box .trophy-svg {
@@ -747,8 +794,7 @@
                 height: 28px;
             }
             #floating-champion-box .champion-name-input {
-                height: 30px;
-                font-size: 9px;
+                height: 32px;
             }
             #knockout-guard-overlay {
                 min-height: 300px;
@@ -765,9 +811,8 @@
                 max-width: 70px;
             }
             .fixture-modern-scorebox {
-                width: 32px;
-                height: 30px;
-                font-size: 13px;
+                width: 36px;
+                height: 32px;
             }
             .fixture-modern-center {
                 gap: 4px;
@@ -1137,7 +1182,48 @@
                     layoutBracket();
                 }
             });
+            guardAgainstInputZoom();
         });
+
+        /* ------------------------------------------------------------
+           Belt-and-braces against "the page zooms when I tap a score box".
+           The CSS already keeps every field at a 16px computed font size,
+           which is what makes browsers zoom in the first place. Some mobile
+           browsers (and an OS-level "text scaling" setting) still zoom on
+           focus, so if the viewport was scaled up by focusing a field we
+           snap it back once that field loses focus. A pinch the user did
+           themselves is left untouched.
+           ------------------------------------------------------------ */
+        function guardAgainstInputZoom() {
+            const vv = window.visualViewport;
+            let scaleBeforeFocus = null;
+
+            document.addEventListener('focusin', (e) => {
+                if (!e.target.matches('input, textarea, select')) return;
+                scaleBeforeFocus = vv ? vv.scale : 1;
+            });
+
+            document.addEventListener('focusout', (e) => {
+                if (!e.target.matches('input, textarea, select')) return;
+                if (scaleBeforeFocus === null) return;
+                const zoomed = vv ? vv.scale : 1;
+                const didAutoZoom = zoomed > scaleBeforeFocus + 0.01;
+                scaleBeforeFocus = null;
+                if (didAutoZoom) resetPageZoom();
+            });
+        }
+
+        function resetPageZoom() {
+            // iOS/Android only re-read the viewport meta when it changes, so we
+            // briefly pin maximum-scale to 1 and then restore the real tag.
+            const meta = document.querySelector('meta[name="viewport"]');
+            if (!meta) return;
+            const original = meta.getAttribute('content');
+            const pinned = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
+            if (meta.getAttribute('content') === pinned) return;
+            meta.setAttribute('content', pinned);
+            setTimeout(() => meta.setAttribute('content', original), 150);
+        }
 
         function loadTournamentsFromStorage() {
             const data = localStorage.getItem('arena_tournaments');
