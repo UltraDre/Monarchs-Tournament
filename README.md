@@ -91,7 +91,7 @@ The cloud backup feature uses two **PostgreSQL functions** (RPC) on your Supabas
 To enable this, create a table (e.g., `backups`) with columns `username`, `access_code`, `data`, and `created_at`. Then define the two functions. The provided code uses a hard‑coded Supabase URL and anon key – you should replace these with your own credentials.
 
 ### Styling
-- **Tailwind CSS** – loaded via CDN for utility classes.
+- **Tailwind CSS** – compiled locally for utility classes and offline use.
 - **Custom CSS** – glass effects, bracket layout, and responsive tweaks.
 
 ### Dependencies
@@ -178,3 +178,9 @@ This project is open‑source and available under the [MIT License](LICENSE).
 ---
 
 **Enjoy running your tournaments!** 👑
+
+## Install and offline use
+
+Serve the project over HTTPS (or `localhost`) rather than opening the HTML file directly. For local development, run `npm start` and visit `http://localhost:8000`. Use your browser's install option to add Monarchs to your home screen or desktop. After the first online visit, the app shell and tournament management work offline; cloud backup and restore still require an internet connection. Tournament data remains in the browser's local storage, so export JSON backups before clearing site data.
+
+The CSS and browser dependencies are included locally for offline use. If you change Tailwind classes in `index.html`, run `npm install` followed by `npm run build` and commit the updated `assets/tailwind.css`. When changing cached app files, increment the cache version in `service-worker.js` so installed clients receive the update.
