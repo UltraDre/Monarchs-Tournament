@@ -1,0 +1,27 @@
+{
+  "name": "monarchs-tournament",
+  "version": "1.0.0",
+  "description": "A powerful, fully client‑side tournament management tool for group stages and knockout brackets. Built with vanilla JavaScript, Tailwind CSS, and Supabase for optional cloud backups. Designed for esports, sports leagues, or any competitive event where you need to manage fixtures, standings, and elimination rounds.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tailwindcss -i tailwind.input.css -o assets/tailwind.css --content index.html --minify",
+    "start": "python3 -m http.server 8000 --bind 0.0.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UltraDre/Monarchs-Tournament.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UltraDre/Monarchs-Tournament/issues"
+  },
+  "homepage": "https://github.com/UltraDre/Monarchs-Tournament#readme",
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.0",
+    "@supabase/supabase-js": "^2.118.0",
+    "tailwindcss": "^3.4.17"
+  },
+  "private": true
+}

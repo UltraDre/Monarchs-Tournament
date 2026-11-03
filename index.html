@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d0f1a" />
+    <meta name="description" content="Manage tournament groups, fixtures and knockout brackets, even offline." />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
     <title>Monarchs Tournament Engine</title>
-    <script src="https://cdn.tailwindcss.com">
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/tailwind.css" />
+    <link rel="stylesheet" href="./assets/fontawesome.min.css" />
 
     <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    <script src="./assets/supabase.js">
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
         * {
             box-sizing: border-box;
@@ -96,8 +98,17 @@
             position: relative;
             width: 100%;
             overflow-x: auto;
+            justify-content: flex-start;
             padding: 60px 0 20px 0;
             min-height: 550px;
+        }
+
+        /* Grow with the bracket so neither side overflows past the scroll origin. */
+        #bracket-container {
+            flex: 0 0 auto;
+            width: max-content;
+            min-width: 100%;
+            max-width: none;
         }
 
         .bracket-viewport {
@@ -106,14 +117,15 @@
             align-items: stretch;
             justify-content: center;
             gap: 48px;
-            min-width: 700px;
+            width: max-content;
+            min-width: 100%;
             min-height: 750px;
             position: relative;
         }
 
         .bracket-col {
-            flex: 0 1 150px;
-            min-width: 115px;
+            flex: 0 0 182px;
+            min-width: 182px;
             position: relative;
             padding: 0 3px;
             display: flex;
@@ -696,12 +708,11 @@
                 font-size: 9px;
             }
             .bracket-viewport {
-                min-width: 460px;
                 gap: 28px;
             }
             .bracket-col {
-                flex: 0 1 95px;
-                min-width: 72px;
+                flex: 0 0 128px;
+                min-width: 128px;
                 padding: 0 2px;
             }
             #floating-champion-box {
@@ -2222,6 +2233,15 @@
             } catch (err) {
                 alert('Network error: ' + err.message);
             }
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js').catch(error => {
+                    console.warn('Offline support could not be registered:', error);
+                });
+            });
         }
     </script>
 </body>
