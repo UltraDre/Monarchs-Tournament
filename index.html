@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- maximum-scale caps the page at 100% so tapping a score box can never
+         zoom the page in (iOS honours it for the auto focus-zoom while still
+         allowing a deliberate two-finger pinch). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <meta name="theme-color" content="#0d0f1a" />
     <meta name="description" content="Manage tournament groups, fixtures and knockout brackets, even offline." />
     <link rel="manifest" href="./manifest.webmanifest" />
@@ -725,21 +728,27 @@
         }
 
         /* ── NO-ZOOM INPUTS ──
-           Mobile browsers zoom the page whenever a text field they focus has a
-           computed font-size under 16px, and a quick double-tap on a field can
-           zoom too. Every field in this app was styled well below that (8-13px),
-           so on small screens the fields get a real 16px font size instead.
-           Nothing is scaled or hidden, and no user-scalable / maximum-scale hack
-           is used: pinch-to-zoom for accessibility keeps working. Desktop keeps
-           its original compact sizes. */
+           Mobile browsers zoom the page whenever a score box they focus has a
+           computed font-size under 16px (iOS Safari, Chrome on Android), and a
+           quick double-tap on the box zooms too. Three layers stop that:
+             1. the viewport meta caps the page at 100% (see <head>),
+             2. touch-action: manipulation below kills double-tap zoom, and
+             3. on small screens every field gets a real 16px font size, so the
+                browser has no reason to zoom in on focus.
+           Nothing is hidden, desktop keeps its original compact sizes, and a
+           deliberate two-finger pinch still works on iOS. */
         input,
         select,
-        textarea {
-            /* disables double-tap-to-zoom on the field itself */
+        textarea,
+        /* a tap that lands on the pill/padding around a score box counts too */
+        .slot,
+        .fixture-row-modern {
             touch-action: manipulation;
         }
 
-        @media (max-width: 900px) {
+        /* Narrow viewports *and* every touch screen (a phone in landscape is
+           wider than 900px, but it still auto-zooms on a small field). */
+        @media (max-width: 900px), (hover: none) and (pointer: coarse) {
             /* !important so no smaller utility class (text-xs, text-sm, ...)
                can put a field back under the 16px auto-zoom threshold */
             input,
@@ -1186,25 +1195,43 @@
         });
 
         /* ------------------------------------------------------------
-           Belt-and-braces against "the page zooms when I tap a score box".
-           The CSS already keeps every field at a 16px computed font size,
-           which is what makes browsers zoom in the first place. Some mobile
-           browsers (and an OS-level "text scaling" setting) still zoom on
-           focus, so if the viewport was scaled up by focusing a field we
-           snap it back once that field loses focus. A pinch the user did
-           themselves is left untouched.
+           Hardening against "the page zooms when I tap a score box".
+
+           The viewport meta already caps the page at 100% and the CSS keeps
+           every field at a 16px computed font size, which are the two things
+           that make browsers auto-zoom. On top of that:
+             - a second tap on a field within 350ms (a double-tap) is
+               swallowed so it cannot trigger double-tap zoom, and
+             - if the visual viewport was still scaled up by focusing a field,
+               it is snapped back as soon as that field loses focus. A pinch
+               the user did themselves is left untouched.
            ------------------------------------------------------------ */
         function guardAgainstInputZoom() {
             const vv = window.visualViewport;
             let scaleBeforeFocus = null;
+            let lastTapAt = 0;
+            let lastTapEl = null;
+
+            // Double-tap guard: a tapped score box keeps focus, so a second quick
+            // tap on the *same* box is cancelled before the browser zooms. Only
+            // score boxes: the name pills use a tap to toggle the winner, so a
+            // quick second tap there must still go through.
+            document.addEventListener('touchend', (e) => {
+                if (!isScoreBox(e.target)) return;
+                const now = Date.now();
+                const isDoubleTapOnSameBox = lastTapEl === e.target && now - lastTapAt < 350;
+                lastTapAt = now;
+                lastTapEl = e.target;
+                if (isDoubleTapOnSameBox) e.preventDefault();
+            }, { passive: false });
 
             document.addEventListener('focusin', (e) => {
-                if (!e.target.matches('input, textarea, select')) return;
+                if (!isField(e.target)) return;
                 scaleBeforeFocus = vv ? vv.scale : 1;
             });
 
             document.addEventListener('focusout', (e) => {
-                if (!e.target.matches('input, textarea, select')) return;
+                if (!isField(e.target)) return;
                 if (scaleBeforeFocus === null) return;
                 const zoomed = vv ? vv.scale : 1;
                 const didAutoZoom = zoomed > scaleBeforeFocus + 0.01;
@@ -1213,13 +1240,24 @@
             });
         }
 
+        function isField(node) {
+            return node instanceof Element && !!node.closest('input, textarea, select');
+        }
+
+        /* Group-stage score boxes (.fixture-modern-scorebox) and knockout score
+           boxes (.score-input). */
+        function isScoreBox(node) {
+            return node instanceof Element && !!node.closest('.fixture-modern-scorebox, .score-input');
+        }
+
         function resetPageZoom() {
             // iOS/Android only re-read the viewport meta when it changes, so we
-            // briefly pin maximum-scale to 1 and then restore the real tag.
+            // briefly pin maximum-scale to 1 and then restore the real tag
+            // (which already carries maximum-scale=1.0).
             const meta = document.querySelector('meta[name="viewport"]');
             if (!meta) return;
             const original = meta.getAttribute('content');
-            const pinned = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
+            const pinned = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
             if (meta.getAttribute('content') === pinned) return;
             meta.setAttribute('content', pinned);
             setTimeout(() => meta.setAttribute('content', original), 150);
